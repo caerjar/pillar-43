@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Pillar-43 · Caerjar</title>
+<meta name="description" content="Pillar-43 is a local archive for small literary presses. Answers cite their sources, writers set what the AI may read, and every answer says what it could not see." />
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,300..600&family=IBM+Plex+Sans:wght@500;600&display=swap" />
+<link rel="stylesheet" href="/assets/site.css" />
+<style>
+.prose h2:first-child{margin-top:0}
+.prose blockquote + p{margin-top:14px}
+.prose blockquote{margin:14px 0 0;padding-left:18px;border-left:2px solid var(--accent);font-size:19px}
+.prose video{display:block;width:100%;margin-top:12px;background:#000;border-radius:6px}
+.prose .note{margin-top:10px;font-size:16px}
+.prose li b{font-weight:600}
+.hero{margin:28px auto 0}
+.hero img{display:block;width:100%;height:auto;border-radius:6px}
+.hero figcaption{margin-top:8px;font-size:15px;color:var(--soft)}
+.sources{margin-top:12px;font-size:16px;color:var(--soft)}
+.sources li{margin-top:6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <a class="logo" href="/"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="9"/><circle cx="11" cy="11" r="3" fill="currentColor"/></svg>Caerjar</a>
+  <nav aria-label="Pages"><a href="/offerings/">What we do</a><a href="/#selected-work">Selected work</a><a href="/#write">Get in touch</a></nav>
+</header>
+
+<main class="work">
+<div class="col">
+  <h1>Pillar-43</h1>
+  <p class="lede">A local archive for small literary presses. Answers cite their sources, writers set what the AI may read, and every answer says what it could not see.</p>
+</div>
+
+<figure class="col hero">
+<img src="pillar-43.jpg" width="1600" height="1123" alt="Pillar 43, the Vulture Stone, at Göbekli Tepe: a limestone pillar with three bag-like motifs along the top, a vulture with a disc beneath them, and a bird's head and a scorpion-like shape below" fetchpriority="high" decoding="async">
+<figcaption>Photo: Sue Fleckney, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC BY-SA 2.0</a>, <a href="https://commons.wikimedia.org/wiki/File:Vulture_Stone,_Gobekli_Tepe,_Sanliurfa,_South-east_Anatolia,_Turkey.jpg">Wikimedia Commons</a></figcaption>
+</figure>
+
+<div class="work-body">
+  <div class="prose col">
+
+<h2>Why Pillar 43</h2>
+<p>An archive is more than the documents it holds. It is also how a community decides what to keep, who may read it, and how the pieces relate to each other.</p>
+<p>Pillar 43, the Vulture Stone at Göbekli Tepe in southeastern Türkiye, was set up around 9500 BCE, long before writing or cities, while farming was only beginning. Its limestone face carries a large vulture, a snake, a scorpion and a headless human: a symbolic world whose meanings remain unknown, part of the archive of the human imagination.</p>
+<p>Some authors read the pillar's carvings as star lore, a record of a comet strike; the excavators dispute it, and Pillar-43 holds the same line in a press's archive, between what the documents say and what a reader brings to them.</p>
+
+<h2>What it is</h2>
+<p>Pillar-43 indexes a press's manuscripts, letters, contracts and minutes on the press's own machine, and answers staff questions with sentences that point to passages the archive holds. It runs a small open-weight language model (8 billion parameters) on that machine, so it needs no cloud service. Writers and staff set, item by item, what the AI may read.</p>
+
+<h2>Video</h2>
+<video controls preload="metadata" src="demo.mov">
+<track kind="captions" src="demo.vtt" srclang="en" label="English">
+Your browser does not play this video. The file is demo.mov.
+</video>
+<p class="note">The video shows the software on a synthetic press. Every name, contract and letter in it is invented.</p>
+
+<h2>Sources</h2>
+<ul class="sources">
+<li>DAI, Tepe Telegrams: <a href="https://www.dainst.blog/the-tepe-telegrams/2016/10/14/of-animals-and-a-headless-man-gobekli-tepe-pillar-43/">Of animals and a headless man. Göbekli Tepe, Pillar 43</a> (2016)</li>
+<li>DAI, Tepe Telegrams: <a href="https://www.dainst.blog/the-tepe-telegrams/2016/06/22/how-old-ist-it-dating-gobekli-tepe/">How old is it? Dating Göbekli Tepe</a> (2016)</li>
+<li>DAI, Tepe Telegrams: <a href="https://www.dainst.blog/the-tepe-telegrams/2017/07/03/more-than-a-vulture-a-response-to-sweatman-and-tsikritsis/">More than a vulture: a response to Sweatman and Tsikritsis</a> (2017)</li>
+</ul>
+
+  </div>
+  <dl class="facts">
+    <dt>Year</dt><dd>2026</dd>
+    <dt>For</dt><dd>Small literary presses, their writers and translators</dd>
+    <dt>Runs on</dt><dd>The press's own machine; no cloud service</dd>
+    <dt>Model</dt><dd>Open-weight, 8 billion parameters</dd>
+    <dt>Licence</dt><dd>Apache 2.0</dd>
+    <dt>Partners</dt><dd>Nightboat Books, first deployment site and literary design partner</dd><dd>Parallax Press</dd><dd>Present Moment Enterprises: co-design, convenings and governance</dd><dd>Caerjar: technical development</dd>
+  </dl>
+</div>
+
+<ul class="work-links">
+  <li><a href="https://github.com/caerjar/pillar-43">Code: github.com/caerjar/pillar-43</a></li>
+  <li><a href="demo.mov">Video: demo.mov</a></li>
+</ul>
+
+</main>
+
+<footer><a href="/">Caerjar</a><a href="mailto:hi@caerjar.com">hi@caerjar.com</a></footer>
+</div>
+</body>
+</html>
