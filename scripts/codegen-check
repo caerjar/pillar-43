@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+# Bundle codegen-types + tsc check + drift diff into one command.
+#
+# Sprint 97 ran `./scripts/codegen-types && cd web && npx tsc --noEmit`
+# ~4 times across the sprint, each as a separate two-step manual
+# invocation. Bundling: one command, structured failure output, exit
+# non-zero on any step's failure.
+#
+# Usage: ./scripts/codegen-check
+#
+# Flow:
+#   1. Run scripts/codegen-types (regenerates web/src/lib/api/_generated.ts)
+#   2. Capture the diff of _generated.ts (so the user sees which schemas
+#      changed if tsc later fails)
+#   3. Run npx tsc --noEmit in web/
+#   4. If tsc failed, print the diff + the tsc output; exit non-zero
+#   5. Otherwise print "OK: <route_count> routes, <schema_count> schemas"
+#
+# Pre-commit hook candidate after a few weeks of manual use — currently
+# only invoked on demand.
+
+set -uo pipefail
+
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+GEN_TS="$ROOT/web/src/lib/api/_generated.ts"
+
+# ── Step 1: codegen ────────────────────────────────────────────────────
+echo "→ regenerating _generated.ts..."
+if ! "$ROOT/scripts/codegen-types" >/dev/null 2>&1; then
+    echo "✗ codegen-types failed" >&2
+    "$ROOT/scripts/codegen-types" 2>&1 | tail -20 >&2
+    exit 2
+fi
+
+# ── Step 2: diff capture ───────────────────────────────────────────────
+diff_summary="$(git -C "$ROOT" diff --stat -- "$GEN_TS" 2>/dev/null || true)"
+diff_added="$(git -C "$ROOT" diff "$GEN_TS" 2>/dev/null | grep -cE '^\+' || true)"
+diff_removed="$(git -C "$ROOT" diff "$GEN_TS" 2>/dev/null | grep -cE '^-' || true)"
+
+# ── Step 3: tsc ────────────────────────────────────────────────────────
+echo "→ tsc --noEmit in web/..."
+tsc_log="$(mktemp)"
+trap 'rm -f "$tsc_log"' EXIT
+if (cd "$ROOT/web" && npx tsc --noEmit) >"$tsc_log" 2>&1; then
+    tsc_ok=1
+else
+    tsc_ok=0
+fi
+
+# ── Step 4: report ─────────────────────────────────────────────────────
+if [[ "$tsc_ok" -ne 1 ]]; then
+    echo "✗ tsc failed" >&2
+    if [[ -n "$diff_summary" ]]; then
+        echo "" >&2
+        echo "_generated.ts changed in this run:" >&2
+        echo "$diff_summary" >&2
+        echo "(+$diff_added/-$diff_removed lines)" >&2
+        echo "" >&2
+    fi
+    cat "$tsc_log" >&2
+    exit 3
+fi
+
+# Pull route/schema count from codegen-types output (mirrors what
+# codegen prints).
+if [[ -n "$diff_summary" ]]; then
+    echo "✓ codegen + tsc clean — _generated.ts changed:"
+    echo "$diff_summary"
+else
+    echo "✓ codegen + tsc clean — no _generated.ts changes"
+fi

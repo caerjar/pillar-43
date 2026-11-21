@@ -1,0 +1,24 @@
+# Keep the runtime image to what actually runs. The image was 1.72 GB, partly
+# because `COPY . .` swept in 124 test files and their fixtures (2026-07-30
+# audit).
+#
+# Safe for the test container: docker-compose.test.yml bind-mounts ./api over
+# /app, so tests + fixtures come from the host at runtime regardless.
+tests/
+**/__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local scratch + config that must never be baked into an image.
+.env
+*.db
+*.sqlite3
+
+.git
+.gitignore
+Dockerfile
+.dockerignore
+.DS_Store

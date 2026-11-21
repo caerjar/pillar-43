@@ -1,0 +1,172 @@
+/**
+ * Design System — Atelier Tokens
+ *
+ * Two source aesthetics:
+ *   eonmind       — warm dark academia (ink on paper, midnight library)
+ *   AthenaTrader  — dark fintech precision (Bloomberg-adjacent, data as hero)
+ *
+ * These are the floor. Experiments should extend or deliberately depart from them.
+ * When you depart, document why in the experiment's brief.
+ */
+
+:root {
+
+  /* ============================================================
+     COLOR — EONMIND (warm dark academia)
+     ============================================================ */
+  --eon-base:         #1a1714;   /* near-black with warm undertone — the page */
+  --eon-surface:      #221f1b;   /* slightly lifted — card, panel */
+  --eon-surface-2:    #2a2620;   /* second lift — hover state, nested surface */
+  --eon-border:       #3a342c;   /* structural lines — subtle, warm */
+  --eon-border-2:     #4a4238;   /* stronger border — active, selected */
+
+  --eon-text:         #e8e0d5;   /* primary text — warm white, not harsh */
+  --eon-text-2:       #b8a898;   /* secondary text — recedes without disappearing */
+  --eon-text-3:       #998d7d;   /* tertiary — labels, metadata, quiet context. Contrast: 5.49:1 on base, 5.05:1 on surface, 4.63:1 on surface-2 (was #7a6e60, 3.0-3.6:1) */
+  --eon-text-inverse: #1a1714;   /* text on light backgrounds */
+
+  --eon-copper:       #c8832a;   /* primary accent — aged authority, not warmth */
+  --eon-copper-dim:   #9a621f;   /* copper in states that recede */
+  --eon-copper-bright:#e09a3a;   /* copper at emphasis — hover, focus */
+  --eon-cream:        #f0e8d8;   /* occasional lift — highlighted text, callouts */
+  --eon-muted:        #a09880;   /* mid-ground — icons, dividers */
+
+  /* ============================================================
+     COLOR — ATHENA (dark fintech precision)
+     ============================================================ */
+  --ath-base:         #030712;   /* gray-950 — maximum depth */
+  --ath-surface:      #0f172a;   /* gray-900 — primary surface */
+  --ath-surface-2:    #1e293b;   /* gray-800 — secondary surface */
+  --ath-border:       #1e293b;   /* structural — tight, invisible until needed */
+  --ath-border-2:     #334155;   /* active border — slice, not box */
+
+  --ath-text:         #f8fafc;   /* slate-50 — clean, high contrast */
+  --ath-text-2:       #94a3b8;   /* slate-400 — secondary, data labels */
+  --ath-text-3:       #475569;   /* slate-600 — tertiary, timestamps */
+
+  --ath-active:       #4f46e5;   /* indigo-600 — the one color in a sea of dark */
+  --ath-active-dim:   #3730a3;   /* indigo-800 — pressed, selected */
+  --ath-active-glow:  #6366f1;   /* indigo-500 — hover lift */
+
+  --ath-positive:     #4ade80;   /* green-400 — gain, success, up */
+  --ath-negative:     #f87171;   /* red-400 — loss, error, down */
+  --ath-neutral:      #facc15;   /* yellow-400 — warning, pending */
+
+  /* ============================================================
+     COLOR — SEMANTIC (shared across both aesthetics)
+     ============================================================ */
+  --color-error:      #ef4444;
+  --color-warning:    #f59e0b;
+  --color-success:    #22c55e;
+  --color-info:       #3b82f6;
+
+  /* ============================================================
+     TYPOGRAPHY
+     ============================================================ */
+
+  /* Font stacks — no Google Fonts runtime dependency */
+  --font-sans:        "Inter", "SF Pro Display", system-ui, -apple-system, sans-serif;
+  --font-mono:        "iA Writer Quattro S", "Courier Prime", "Courier New", ui-monospace, monospace;
+  --font-serif:       "Georgia", "Times New Roman", serif; /* occasional editorial use only */
+
+  /* Type scale — minor third (1.25) */
+  --text-2xs:         0.64rem;   /* 10.24px — metadata, timestamps */
+  --text-xs:          0.8rem;    /* 12.8px — labels, captions */
+  --text-sm:          1rem;      /* 16px — body, UI text */
+  --text-md:          1.25rem;   /* 20px — emphasized body */
+  --text-lg:          1.563rem;  /* 25px — section headers */
+  --text-xl:          1.953rem;  /* 31.25px — page headers */
+  --text-2xl:         2.441rem;  /* 39px — display */
+  --text-3xl:         3.052rem;  /* 48.8px — hero */
+  --text-4xl:         4rem;      /* 64px — editorial / statement */
+
+  /* Weight tokens */
+  --weight-light:     300;
+  --weight-regular:   400;
+  --weight-medium:    500;
+  --weight-semibold:  600;
+  --weight-bold:      700;
+  --weight-black:     900;
+
+  /* Tracking (letter-spacing) */
+  --tracking-tight:   -0.025em;  /* large display type */
+  --tracking-snug:    -0.01em;   /* headings */
+  --tracking-normal:  0em;
+  --tracking-wide:    0.05em;    /* small caps, labels */
+  --tracking-wider:   0.1em;     /* all-caps UI elements */
+  --tracking-widest:  0.15em;    /* metadata, timestamps */
+
+  /* Leading (line-height) */
+  --leading-none:     1;
+  --leading-tight:    1.2;       /* display, hero */
+  --leading-snug:     1.35;      /* headings */
+  --leading-normal:   1.5;       /* UI */
+  --leading-relaxed:  1.65;      /* body, reading */
+  --leading-loose:    1.8;       /* long-form prose */
+
+  /* ============================================================
+     SPACING — 4px base grid
+     ============================================================ */
+  --space-1:  0.25rem;  /* 4px */
+  --space-2:  0.5rem;   /* 8px */
+  --space-3:  0.75rem;  /* 12px */
+  --space-4:  1rem;     /* 16px */
+  --space-5:  1.25rem;  /* 20px */
+  --space-6:  1.5rem;   /* 24px */
+  --space-8:  2rem;     /* 32px */
+  --space-10: 2.5rem;   /* 40px */
+  --space-12: 3rem;     /* 48px */
+  --space-16: 4rem;     /* 64px */
+  --space-20: 5rem;     /* 80px */
+  --space-24: 6rem;     /* 96px */
+  --space-32: 8rem;     /* 128px */
+
+  /* ============================================================
+     RADIUS — restrained, functional
+     ============================================================ */
+  --radius-none:  0;
+  --radius-sm:    2px;
+  --radius-md:    4px;
+  --radius-lg:    6px;
+  --radius-full:  9999px;  /* pills only — use deliberately */
+
+  /* ============================================================
+     SHADOW — depth through layout, not drop shadows
+     ============================================================ */
+  --shadow-subtle:  0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-surface: 0 2px 8px rgba(0, 0, 0, 0.5);
+  --shadow-lifted:  0 8px 24px rgba(0, 0, 0, 0.6);
+  /* Avoid: box-shadow as primary depth signal. Use color contrast instead. */
+
+  /* ============================================================
+     MOTION — purposeful only
+     ============================================================ */
+  --duration-instant: 50ms;
+  --duration-fast:    100ms;
+  --duration-normal:  200ms;
+  --duration-slow:    350ms;
+  --duration-glacial: 600ms;
+
+  --ease-out:    cubic-bezier(0.0, 0.0, 0.2, 1.0);
+  --ease-in:     cubic-bezier(0.4, 0.0, 1.0, 1.0);
+  --ease-inout:  cubic-bezier(0.4, 0.0, 0.2, 1.0);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1.0); /* slight overshoot */
+
+  /* ============================================================
+     LAYOUT
+     ============================================================ */
+  --grid-columns:   12;
+  --grid-gutter:    var(--space-6);
+  --content-narrow: 40rem;   /* 640px — reading width */
+  --content-mid:    64rem;   /* 1024px — dashboard mid */
+  --content-wide:   90rem;   /* 1440px — desktop canonical */
+  --content-full:   100%;
+
+  /* Z-index scale */
+  --z-base:    0;
+  --z-raised:  10;
+  --z-overlay: 100;
+  --z-modal:   200;
+  --z-toast:   300;
+  --z-tooltip: 400;
+}

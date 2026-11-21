@@ -1,0 +1,31 @@
+# Coverage scope for the backend.
+#
+# Measures hand-written source only. Including tests/ inflates the number by
+# ~12 points (test files are ~100% covered by definition) while saying nothing
+# about how well the app is tested; migrations/ are append-only history that
+# runs once per database, not code under test.
+[run]
+source = .
+omit =
+    tests/*
+    migrations/*
+    scripts/*
+    host_root/*
+    */site-packages/*
+
+[report]
+# Threshold is the MEASURED floor rounded down, not a target. Its job is to
+# stop coverage sliding backwards. Raising it is a deliberate act AFTER
+# writing tests — which is what happened here.
+#   2026-08-05: 74.9% -> fail_under 74
+#   2026-08-06: 75.6% -> fail_under 75 (periodic_review.py 0% -> 81.5%)
+fail_under = 75
+precision = 1
+show_missing = false
+skip_covered = true
+
+exclude_also =
+    if TYPE_CHECKING:
+    raise NotImplementedError
+    if __name__ == .__main__.:
+    @overload

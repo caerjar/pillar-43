@@ -1,0 +1,69 @@
+{
+  "_note": "text is exactly what was spoken, segment by segment, in order; voices are macOS say voices",
+  "recordings": [
+    {
+      "file": "01_reading_quay-nine_and_chandlery.m4a",
+      "kind": "reading",
+      "approx_seconds": 34.5,
+      "segments": [
+        {
+          "speaker": "Karen",
+          "voice": "Karen",
+          "text": "Reading at the Tallow Room. Two poems."
+        },
+        {
+          "speaker": "Karen",
+          "voice": "Karen",
+          "text": "Low Water at Quay Nine, by Cassia Merrowby. The tide has gone to bargain somewhere else. The boats lean on their elbows in the mud. A gull inspects the rope like an auditor. Nobody here is waiting. We are all waiting. The bell on the pontoon counts nothing, and counts it carefully."
+        },
+        {
+          "speaker": "Karen",
+          "voice": "Karen",
+          "text": "Last Orders at the Chandlery, by Maud Ferriday. They sold us rope, and then the knots to go with it. They sold us lamps, and then the dark to hang them in. Close the ledger gently, Mr. Pryce. The harbour kept its tide of small lamps."
+        }
+      ],
+      "full_text": "Reading at the Tallow Room. Two poems. Low Water at Quay Nine, by Cassia Merrowby. The tide has gone to bargain somewhere else. The boats lean on their elbows in the mud. A gull inspects the rope like an auditor. Nobody here is waiting. We are all waiting. The bell on the pontoon counts nothing, and counts it carefully. Last Orders at the Chandlery, by Maud Ferriday. They sold us rope, and then the knots to go with it. They sold us lamps, and then the dark to hang them in. Close the ledger gently, Mr. Pryce. The harbour kept its tide of small lamps."
+    },
+    {
+      "file": "02_interview_tallowfield_translator.m4a",
+      "kind": "interview",
+      "approx_seconds": 20.4,
+      "segments": [
+        {
+          "speaker": "Interviewer",
+          "voice": "Daniel",
+          "text": "Wren, why bring The Drowned Orchard back into print?"
+        },
+        {
+          "speaker": "Wren Tallowfield",
+          "voice": "Samantha",
+          "text": "Because Teodoro Vasconcelo-Reis wrote about water the way other poets write about God, and the book had been missing since January."
+        },
+        {
+          "speaker": "Interviewer",
+          "voice": "Daniel",
+          "text": "What was hardest to translate?"
+        },
+        {
+          "speaker": "Wren Tallowfield",
+          "voice": "Samantha",
+          "text": "One word. Saudade does not stay still, so in one poem I wrote absence, and in another I left it alone."
+        }
+      ],
+      "full_text": "Wren, why bring The Drowned Orchard back into print? Because Teodoro Vasconcelo-Reis wrote about water the way other poets write about God, and the book had been missing since January. What was hardest to translate? One word. Saudade does not stay still, so in one poem I wrote absence, and in another I left it alone."
+    },
+    {
+      "file": "03_launch-intro_marguerite.wav",
+      "kind": "launch intro",
+      "approx_seconds": 23.0,
+      "segments": [
+        {
+          "speaker": "Marguerite Oyelaran-Voss",
+          "voice": "Moira",
+          "text": "Good evening, and welcome to the Tallow Room. I am Marguerite Oyelaran-Voss, publisher of Lantern Wharf Editions. On November nineteenth we celebrate the return of The Drowned Orchard, poems by Teodoro Vasconcelo-Reis, translated by Wren Tallowfield. The book was out of print. It is back because his estate asked, and because we listened. Please welcome Wren."
+        }
+      ],
+      "full_text": "Good evening, and welcome to the Tallow Room. I am Marguerite Oyelaran-Voss, publisher of Lantern Wharf Editions. On November nineteenth we celebrate the return of The Drowned Orchard, poems by Teodoro Vasconcelo-Reis, translated by Wren Tallowfield. The book was out of print. It is back because his estate asked, and because we listened. Please welcome Wren."
+    }
+  ]
+}

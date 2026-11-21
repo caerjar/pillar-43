@@ -1,0 +1,12 @@
+{
+  "name": "pillar43-desktop",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Tauri shell for the native macOS build. Owns the window and the backend process; the UI itself is web/dist, served by the backend.",
+  "scripts": {
+    "tauri": "tauri"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "2.11.4"
+  }
+}

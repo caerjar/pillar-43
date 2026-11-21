@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# Run the mypy type gate inside the reused backend test container.
+#
+# Config: api/mypy.ini (lenient, with a shrinking per-module type-debt
+# allowlist). Usage:
+#   ./scripts/mypy-api                 → check the whole api/ surface
+#   ./scripts/mypy-api services/foo.py → check a subset (e.g. retiring debt)
+#
+# Mirrors ./scripts/test-api's container-reuse pattern so the warm container
+# is shared with the test runs.
+set -euo pipefail
+
+# shellcheck source=lib/test-container.sh
+source "$(dirname "$0")/lib/test-container.sh"
+ensure_test_container
+
+ARGS=("$@")
+if [[ ${#ARGS[@]} -eq 0 ]]; then
+  ARGS=(".")
+fi
+
+exec "${DC[@]}" exec -T api python -m mypy "${ARGS[@]}"

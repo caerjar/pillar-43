@@ -1,0 +1,59 @@
+# Organization profile for Lantern Wharf Editions, the invented press in fixtures/synthetic-press.
+# Everything organization-specific lives here; the code reads it and hard-codes
+# nothing. A second organization copies this file and changes it.
+
+org_name: Lantern Wharf Editions
+title: "Pillar-43 - Local Archive"
+
+# The kinds of item this organization holds. `match` globs are tried in order
+# against the item's path inside the library (first match wins); `default`
+# is the consent level an item gets at intake until someone changes it.
+# private = held, never searchable; staff = searchable and cited to staff,
+# never sent to a model; model = a model may read it at question time.
+kinds:
+  - {kind: contract,    match: ["**/contracts/**", "**/*contract*"],              default: staff}
+  - {kind: minutes,     match: ["**/board/**", "**/*minutes*"],                   default: staff}
+  - {kind: email,       match: ["**/*.mbox", "**/*.eml"],                         default: private}
+  - {kind: letter,      match: ["**/letters/**", "**/correspondence/**"],         default: private}
+  - {kind: recording,   match: ["**/*.m4a", "**/*.wav", "**/*.mp3", "**/*.aiff"], default: private}
+  - {kind: handwritten, match: ["**/handwritten/**"],                             default: private}
+  - {kind: design,      match: ["**/design/**", "**/*.png", "**/*.svg"],          default: staff}
+  - {kind: book,        match: ["**/*.epub", "**/books/**"],                      default: private}
+  - {kind: document,    match: ["**/manuscripts/**", "**/*.docx", "**/*.pdf"],    default: private}
+  - {kind: note,        match: ["**/*.md", "**/*.txt"],                           default: staff}
+  - {kind: catalog,     match: ["**/catalog/**", "**/*.csv"],                     default: model}
+
+# Writers' terms of use, in the manner of Local Contexts labels. A label is
+# enforced, not only displayed: `only` lists the only purposes the AI may use
+# the item for, `deny` the purposes it may not; `roles` restricts the permitted
+# purposes to callers with one of those roles. Purposes: ask, teaching-packet,
+# editorial-history, training, export (editorial-history is its own purpose so a
+# label can allow or refuse it alone; teaching only allows it, 2026-11-19). `aipref` is the same term in the IETF AI-preferences
+# vocabulary (keys train-ai, ai-use, search; values y or n); a term that
+# vocabulary cannot express (attribution) has none.
+# Checked against the raw text 2026-11-19 (ietf.org/archive/id/
+# draft-ietf-aipref-vocab-08.txt, latest; -09 does not exist): tokens train-ai,
+# ai-use, search (s6.1, case sensitive); values y/n as bare Tokens (s6.2);
+# a Structured Fields Dictionary "train-ai=n, ai-use=n" (s6), the same form as
+# the Content-Usage header in draft-ietf-aipref-attach-05. Categories are flat:
+# train-ai=n does not imply ai-use=n, so each label states both. ai-use is new
+# in -08, and the draft says it does not yet have WG consensus.
+aipref_draft: draft-ietf-aipref-vocab-08
+labels:
+  teaching_only:        {name: "teaching only", only: [teaching-packet, editorial-history], aipref: {train-ai: n, ai-use: n}}
+  ask_the_estate:       {name: "ask the estate", only: [], aipref: {train-ai: n, ai-use: n}}
+  translators_only:     {name: "translators of this book only", only: [ask], roles: [translator], aipref: {train-ai: n, ai-use: n}}
+  never_for_training:   {name: "never for training", deny: [training], aipref: {train-ai: n}}
+  attribution_required: {name: "attribution required", attribution: true}
+
+# Roles of the people items belong to.
+roles: [author, translator, estate, editor, publisher, designer, board, anthologist, correspondent]
+
+# Rights fields extracted from each contract (milestone 2).
+rights_fields: [isbn, language, territory, formats, term, reversion_trigger,
+                reversion_notice_months, grantor, grantee, signed_on]
+
+# Local models only. No hosted provider is configurable in the org profile.
+models:
+  answer: qwen3:8b
+  vision: qwen2.5vl:7b

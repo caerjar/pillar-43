@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Hardened-runtime entitlements for direct distribution (Developer ID +
+  notarization).
+
+  DELIBERATELY EMPTY. It carried three relaxations —
+    com.apple.security.cs.allow-jit
+    com.apple.security.cs.allow-unsigned-executable-memory
+    com.apple.security.cs.disable-library-validation
+  — taken from plans/MACOS_DMG_RUST_REPACKAGING_PLAN.md:202-203 on the
+  assumption that ONNX Runtime generates executable code and that PyInstaller's
+  dlopen'd libraries would trip library validation. Neither was ever measured,
+  because no Developer ID certificate existed when they were written.
+
+  Measured 2026-08-21, once one did. With this file empty and the hardened
+  runtime enforced, the bundled interpreter completed a full catalog pass:
+  5 files, 117 chunks, 117 chunk_vectors. 117 real ONNX inferences, no JIT
+  entitlement. Removing them one at a time and all together made no difference.
+
+  The harness was checked for the failure it was supposed to be able to detect,
+  rather than trusted because it went green: `codesign -dvv` showed
+  flags=0x10000(runtime) throughout, and DYLD_PRINT_LIBRARIES=1 produced no
+  output — the runtime stripping DYLD_* is exactly what it does without
+  com.apple.security.cs.allow-dyld-environment-variables, so enforcement was
+  live and a genuine violation would have been killed.
+
+  PyInstaller is also gone (see plans/EMBEDDED_CPYTHON_SIDECAR.md), which
+  retired the library-validation argument independently: every .so in the
+  bundle is signed with the same Team ID, which is what validation asks for.
+
+  BEFORE ADDING ONE BACK: reproduce the failure with the entitlement absent and
+  record what died. An empty file is worth keeping empty — each relaxation
+  widens the attack surface of a process that reads the user's entire library,
+  and each is a question at App Store review, where the first two are refused
+  outright.
+
+  Verified scope, stated so the next person knows what was not covered:
+  startup, markdown and PNG extraction, chunking, embedding, the vector store
+  and the scheduler. Not exercised: PDF/EPUB extraction, transcription (not
+  bundled), or a provider call over the network. All are ahead-of-time compiled
+  and none is a plausible JIT, but they were not run.
+-->
+<plist version="1.0">
+<dict/>
+</plist>

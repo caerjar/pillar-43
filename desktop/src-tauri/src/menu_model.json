@@ -1,0 +1,52 @@
+{
+  "_generated": "scripts/codegen-menu from web/src/lib/menu/menuModel.ts — do not edit",
+  "menus": [
+    {
+      "id": "app",
+      "label": "Pillar-43",
+      "items": [
+        {
+          "id": "app.settings",
+          "label": "Settings…",
+          "accelerator": "CmdOrCtrl+,"
+        }
+      ]
+    },
+    {
+      "id": "go",
+      "label": "Go",
+      "items": [
+        {
+          "id": "go.back",
+          "label": "Back",
+          "accelerator": "CmdOrCtrl+["
+        },
+        {
+          "id": "go.forward",
+          "label": "Forward",
+          "accelerator": "CmdOrCtrl+]"
+        },
+        "separator",
+        {
+          "id": "go.search",
+          "label": "Search…",
+          "accelerator": "CmdOrCtrl+K"
+        },
+        {
+          "id": "go.command-palette",
+          "label": "Command Palette…",
+          "accelerator": "CmdOrCtrl+P"
+        },
+        "separator",
+        {
+          "id": "go.ask",
+          "label": "Ask"
+        },
+        {
+          "id": "go.files",
+          "label": "Files"
+        }
+      ]
+    }
+  ]
+}

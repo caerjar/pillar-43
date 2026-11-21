@@ -1,0 +1,32 @@
+fastapi==0.115.6
+# Pinned: unpinned, a rebuild on 2026-11-18 pulled pydantic 2.14.3, which
+# fastapi 0.115.6 cannot import (eval_type_backport) — every test errored.
+pydantic==2.10.4
+uvicorn[standard]==0.34.0
+httpx==0.28.1
+python-dotenv==1.0.1
+pypdf==5.1.0
+# PDF page rasterising. A self-contained wheel with PDFium inside, chosen
+# over poppler's pdftoppm because a bundled macOS app has no PATH to find
+# a system binary on. See services/vault/pdf.py:render_pdf_page.
+pypdfium2==5.13.0
+fastmcp>=2.0.0,<3.0.0
+alembic==1.14.0
+faster-whisper==1.1.0
+requests==2.32.3
+Pillow==10.4.0
+pillow-heif==0.18.0
+PyYAML==6.0.2
+google-api-python-client==2.155.0
+google-auth==2.37.0
+google-auth-oauthlib==1.2.1
+lxml==5.3.0
+# Inbox file watcher (services/scheduled/inbox_watcher.py).
+watchdog==6.0.0
+# In-process embeddings — replaces the `embeddings` container (2026-08-18).
+# Pinned, not floated: fastembed carries onnxruntime and a tokenizer, and a
+# minor bump in either can shift vectors for the same model. That would leave
+# freshly-embedded chunks subtly incomparable to ones already in the store,
+# with no error to notice. Verified against 0.8.0 in the Phase 0 spike.
+fastembed==0.8.0
+numpy>=2.0

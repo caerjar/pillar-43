@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+# Run backend pytest inside Docker.
+#
+# Usage: ./scripts/test-api [pytest-args...]
+#   ./scripts/test-api              → full suite, parallel (-n auto), quiet
+#   ./scripts/test-api -v           → verbose
+#   ./scripts/test-api tests/test_files.py -v
+#   ./scripts/test-api -k library_status
+#   ./scripts/test-api -n 1         → serial (debugging, or test ordering matters)
+#   ./scripts/test-api --no-reuse   → fresh container each run (legacy mode)
+#   ./scripts/test-api --rebuild    → rebuild this tree's test image first
+#                                     (after api/Dockerfile or requirements change)
+#   ./scripts/test-api --down       → remove this tree's test container and
+#                                     network (do it before removing a worktree:
+#                                     each tree's project holds a Docker network
+#                                     and the pool runs out)
+#
+# Speedups vs. the legacy `docker compose run --rm` form:
+#   - Container reuse: the test container stays warm between invocations,
+#     saving ~3-5s of `docker compose run` overhead per call. Matters for
+#     tight `-k <pattern>` iteration loops.
+#   - pytest-xdist (-n auto): runs tests in parallel across CPU cores.
+#     Each worker gets its own tmp_path; conftest.py's autouse
+#     `_reset_module_caches` is per-test so it's safe across workers.
+#
+# Quick subset: `./scripts/test-api-fast` excludes `slow` + `integration`
+# marked tests for a sub-minute feedback loop.
+
+set -euo pipefail
+
+# shellcheck source=lib/test-container.sh
+source "$(dirname "$0")/lib/test-container.sh"
+
+USE_REUSE=1
+REBUILD=0
+PYTEST_ARGS=()
+HAS_PARALLEL_FLAG=0
+
+for arg in "$@"; do
+  case "$arg" in
+    --no-reuse)
+      USE_REUSE=0
+      ;;
+    --rebuild)
+      REBUILD=1
+      ;;
+    --down)
+      exec "${DC[@]}" down --remove-orphans
+      ;;
+    -n|-n[0-9]*|--numprocesses|--numprocesses=*)
+      HAS_PARALLEL_FLAG=1
+      PYTEST_ARGS+=("$arg")
+      ;;
+    *)
+      PYTEST_ARGS+=("$arg")
+      ;;
+  esac
+done
+
+# Default parallelism: auto (one worker per CPU). User can override with -n N.
+if [[ $HAS_PARALLEL_FLAG -eq 0 ]]; then
+  # `${arr[@]+"${arr[@]}"}` guard: bash 3.2 (macOS system bash) treats an
+  # empty array's expansion as unbound under `set -u`, so a bare
+  # `"${PYTEST_ARGS[@]}"` aborts the no-arg invocation — the documented
+  # full-suite command.
+  PYTEST_ARGS=("-n" "auto" ${PYTEST_ARGS[@]+"${PYTEST_ARGS[@]}"})
+fi
+
+# If no other args, default to quiet output.
+if [[ ${#PYTEST_ARGS[@]} -le 2 ]]; then
+  PYTEST_ARGS+=("-q")
+fi
+
+if [[ $REBUILD -eq 1 ]]; then
+  "${DC[@]}" build api
+  "${DC[@]}" up -d --force-recreate api >/dev/null
+fi
+
+if [[ $USE_REUSE -eq 1 ]]; then
+  # Reuse the warm container, but only one that mounts THIS tree.
+  ensure_test_container
+  exec "${DC[@]}" exec -T api pytest "${PYTEST_ARGS[@]}"
+else
+  exec "${DC[@]}" run --rm api pytest "${PYTEST_ARGS[@]}"
+fi

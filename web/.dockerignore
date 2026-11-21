@@ -1,0 +1,21 @@
+# Keep the build context small and deterministic. Without this, `COPY . .`
+# uploads the host's node_modules (485 MB) into the build stage, where `npm ci`
+# has already installed a clean tree — slow, and risks host-arch binaries
+# leaking into the image.
+node_modules
+dist
+.vite
+coverage
+
+# Tests + tooling: the image builds the bundle, it never runs the suite.
+**/*.test.ts
+**/*.test.tsx
+src/test-setup.ts
+eslint.config.js
+
+.git
+.gitignore
+Dockerfile
+.dockerignore
+npm-debug.log*
+.DS_Store

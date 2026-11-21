@@ -1,0 +1,84 @@
+#!/usr/bin/env bash
+# Run the backend test suite against the BUNDLED interpreter.
+#
+# The gap this closes: every other gate in this repo runs inside Docker.
+# `./scripts/test-api` execs pytest in the test container, and no CI workflow
+# builds the desktop app at all. So the macOS bundle — the artifact users
+# actually run — had no test coverage of its own.
+#
+# That is not theoretical. The app shipped with `openai==1.54.3` against
+# `httpx==0.28.1`, which removed the `proxies` kwarg those releases pass, so
+# every openai-compatible provider failed at client construction. All 1,827
+# backend tests passed throughout, because they ran against Docker's
+# dependency set.
+#
+# ## Why this is cheap
+#
+# The bundle's backend source is COPIED VERBATIM from `api/` by
+# build-desktop.sh step 2. Source does not drift between the two builds —
+# dependencies do. So running the existing suite with the bundled interpreter
+# against the repo's own source tests exactly the axis where bugs live, and
+# needs no new tests written.
+#
+# Seen once and not since (2026-08-23): a
+# `PytestUnhandledThreadExceptionWarning` on a build run, absent from two
+# direct runs immediately after and absent from Docker entirely. Intermittent,
+# non-failing, and unexplained — recorded so the next person to see it knows it
+# is not new. If it becomes reproducible it is worth chasing: a background
+# thread raising is exactly the class of bug this gate exists to surface.
+#
+#   ./scripts/test-desktop-bundle              fast subset
+#   ./scripts/test-desktop-bundle -k foo       pass anything through to pytest
+#   ./scripts/test-desktop-bundle --rebuild    discard and recreate the venv
+set -euo pipefail
+
+REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+PYBIN="$REPO/desktop/src-tauri/resources/python/bin/python3.12"
+
+# NOT under resources/. Everything there is bundled into the .app and signed —
+# a venv in that tree would ship pytest to users and invalidate the signature.
+VENV="$REPO/desktop/.tools/testvenv"
+
+if [ ! -x "$PYBIN" ]; then
+  echo "No bundled interpreter at $PYBIN" >&2
+  echo "Run ./scripts/build-desktop.sh first (step 2 stages it)." >&2
+  exit 1
+fi
+
+if [ "${1:-}" = "--rebuild" ]; then
+  rm -rf "$VENV"
+  shift
+fi
+
+if [ ! -x "$VENV/bin/pytest" ]; then
+  echo "  creating test venv from the bundled interpreter…"
+  # --system-site-packages is the point: the venv sees the BUNDLE's real
+  # dependency set and adds only test tooling on top. Without it we would be
+  # testing a fresh install, which is the thing we already test in Docker.
+  "$PYBIN" -m venv --system-site-packages "$VENV"
+  # requirements-dev.txt exists precisely so pytest/ruff/mypy never reach
+  # production; reuse it rather than pinning a second time here.
+  "$VENV/bin/pip" install -q -r "$REPO/api/requirements-dev.txt"
+fi
+
+# The environment docker-compose.test.yml provides, with its volume mounts
+# resolved to repo paths. Keep in step with that file — a divergence here shows
+# up as tests failing for reasons that have nothing to do with the bundle.
+export TESTING=1
+export LIBRARY_ROOT="$REPO/api/tests/fixtures"
+export NOTES_PATH="$REPO/api/tests/fixtures/_notes"
+export GENERATED_PATH="$REPO/api/tests/fixtures/generated"
+# Ambient PYTHONPATH leaks Homebrew site-packages into the run — the same trap
+# build-desktop.sh unsets for — it would test the wrong interpreter's deps.
+unset PYTHONPATH PYTHONHOME
+
+# `not slow and not integration` — the markers in api/pytest.ini. `integration`
+# is defined structurally as "needs a real external service or binary", which is
+# exactly what the bundle omits, so those would fail for reasons that are not
+# bugs.
+ARGS=(-m "not slow and not integration" -q)
+[ $# -gt 0 ] && ARGS=("$@")
+
+echo "  pytest against $("$PYBIN" -V) from the bundle"
+cd "$REPO/api"
+exec "$VENV/bin/pytest" "${ARGS[@]}"

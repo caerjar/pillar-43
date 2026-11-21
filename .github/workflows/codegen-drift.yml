@@ -1,0 +1,71 @@
+name: Codegen drift
+
+on:
+  push:
+    branches: [main, 'sprint/**', 'feat/**']
+  pull_request:
+    branches: [main]
+
+# Step 5.1 of the AI Agentic Coding plan. Fails the PR if the committed
+# `web/src/lib/api/_generated.ts` doesn't match what `./scripts/codegen-types`
+# would produce against the current backend.
+#
+# Catches the exact failure mode hit in Sprint 96: a backend Pydantic model
+# changes, the developer forgets to re-run codegen, the frontend keeps the
+# stale type, drift surfaces weeks later. This gate forces the regeneration
+# into the same PR as the model change.
+
+jobs:
+  codegen-drift:
+    name: _generated.ts drift check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install backend deps
+        run: pip install -r api/requirements.txt
+        working-directory: ${{ github.workspace }}
+
+      - name: Install frontend deps
+        run: npm ci
+        working-directory: web
+
+      - name: Dump openapi.json from the FastAPI app
+        # Mirrors `scripts/codegen-types` but runs the Python directly
+        # against the host's installed deps. The script uses `docker
+        # compose -p src-test` which isn't available in this CI runner,
+        # so we replicate the schema dump in-process.
+        run: |
+          mkdir -p /tmp/codegen
+          TESTING=1 \
+          LIBRARY_ROOT=/tmp/vault \
+          NOTES_PATH=/tmp/active \
+          GENERATED_PATH=/tmp/generated \
+          python -c "import json, sys; sys.path.insert(0, 'api'); from main import app; sys.stdout.write(json.dumps(app.openapi()))" > /tmp/codegen/openapi.json
+          echo "Schema dumped: $(wc -c </tmp/codegen/openapi.json) bytes"
+
+      - name: Regenerate _generated.ts
+        run: |
+          npx --no-install openapi-typescript /tmp/codegen/openapi.json -o src/lib/api/_generated.ts
+        working-directory: web
+
+      - name: Fail if drift
+        run: |
+          if ! git diff --exit-code web/src/lib/api/_generated.ts; then
+            echo ""
+            echo "::error::web/src/lib/api/_generated.ts is out of sync."
+            echo "Run \`./scripts/codegen-types\` locally and commit the diff."
+            exit 1
+          fi
+          echo "✓ _generated.ts is in sync with the backend OpenAPI schema."

@@ -1,0 +1,11 @@
+# Revisions to skip in `git blame`.
+#
+# Use it by default:
+#   git config blame.ignoreRevsFile .git-blame-ignore-revs
+# (GitHub reads this file automatically.)
+#
+# Only whole-tree mechanical changes belong here — a commit listed here is
+# one where nobody made a decision, so attributing a line to it is noise.
+
+# style: adopt ruff format across the tree (329 files, ASTs verified identical)
+d0bcc0e07a783894743d5d80984fd28d04c13e84

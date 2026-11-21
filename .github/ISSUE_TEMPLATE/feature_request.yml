@@ -1,0 +1,35 @@
+name: Feature request
+description: Suggest a capability
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: |
+        What are you trying to do that Pillar-43 makes hard today? Describe the
+        situation rather than the solution — it usually leads somewhere better.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What you have in mind
+      description: Optional. If you already have a shape in mind, describe it.
+
+  - type: textarea
+    id: workaround
+    attributes:
+      label: How you handle it now
+      description: Current workaround, if any. Helps gauge how much this costs you.
+
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Scope check
+      options:
+        - label: >
+            This fits a local-first, self-hosted, single-user tool. (Pillar-43 has
+            no authentication and no multi-user model by design.)
+          required: true

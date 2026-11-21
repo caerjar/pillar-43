@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+# Coverage for both suites, with the thresholds that gate CI.
+#
+# Backend config:  api/.coveragerc     (fail_under, omit list)
+# Frontend config: web/vite.config.ts  (test.coverage.thresholds)
+#
+# Both thresholds are the MEASURED floor, not a target — they exist to stop
+# coverage sliding backwards. Raise them after writing tests, never before.
+#
+#   ./scripts/coverage            → both suites
+#   ./scripts/coverage backend    → api only
+#   ./scripts/coverage frontend   → web only
+#
+# HTML reports: api → htmlcov/index.html, web → web/coverage/index.html
+
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+want="${1:-both}"
+
+if [[ "$want" == "both" || "$want" == "backend" ]]; then
+  echo "── backend ─────────────────────────────────────────────"
+  ./scripts/test-api --cov --cov-report=term:skip-covered --cov-report=html
+fi
+
+if [[ "$want" == "both" || "$want" == "frontend" ]]; then
+  echo "── frontend ────────────────────────────────────────────"
+  (cd web && npx vitest run --coverage)
+fi

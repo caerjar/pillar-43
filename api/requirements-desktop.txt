@@ -1,0 +1,53 @@
+# Dependency set for the native macOS app.
+#
+# This exists because the desktop bundle is a SUBSET of the server's
+# dependencies, and until 2026-08-19 that subset was expressed as PyInstaller
+# `--exclude-module` flags. Dropping PyInstaller dropped the exclusions with it:
+# a plain `pip install -r requirements.txt` would silently re-enable the local
+# Whisper path and add ~51MB of `av`/`ctranslate2` to every bundle. An
+# exclusion that lives in a build flag is invisible the moment the build
+# changes, so it lives here instead, where it is a line you can read.
+#
+# KEEP IN SYNC with api/requirements.txt. This file deliberately does NOT use
+# `-r requirements.txt` + overrides, because pip has no "uninstall this one"
+# directive — the whole list is restated so a drift is visible in review rather
+# than inferred.
+#
+# Deliberately omitted vs api/requirements.txt:
+#   faster-whisper  — local transcription. Needs ffmpeg, which the bundle does
+#                     not ship (see the header of scripts/build-desktop.sh),
+#                     and pulls ctranslate2 + av for ~51MB. The
+#                     OpenAI-compatible Whisper path still works and
+#                     services/capabilities.py reports the gap honestly.
+
+fastapi==0.115.6
+# Pinned: unpinned, a rebuild on 2026-11-18 pulled pydantic 2.14.3, which
+# fastapi 0.115.6 cannot import (eval_type_backport) — every test errored.
+pydantic==2.10.4
+uvicorn[standard]==0.34.0
+httpx==0.28.1
+python-dotenv==1.0.1
+pypdf==5.1.0
+# PDF page rasterising. A self-contained wheel with PDFium inside, chosen
+# over poppler's pdftoppm because a bundled macOS app has no PATH to find
+# a system binary on. See services/vault/pdf.py:render_pdf_page.
+pypdfium2==5.13.0
+fastmcp>=2.0.0,<3.0.0
+alembic==1.14.0
+requests==2.32.3
+Pillow==10.4.0
+pillow-heif==0.18.0
+PyYAML==6.0.2
+google-api-python-client==2.155.0
+google-auth==2.37.0
+google-auth-oauthlib==1.2.1
+lxml==5.3.0
+watchdog==6.0.0
+fastembed==0.8.0
+numpy>=2.0
+
+# Not in api/requirements.txt: the Docker image gets certifi transitively and
+# never notices. A relocated interpreter with no system trust store does — this
+# went missing once already and the model fetch failed silently because its
+# output was redirected. See the PYTHONPATH note in scripts/build-desktop.sh.
+certifi

@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+# Generate the native menu's labels from the TypeScript model.
+#
+# `web/src/lib/menu/menuModel.ts` is the single definition; the Tauri shell
+# needs the same labels, ids and accelerators in a form Rust can read before
+# any page exists. Rather than trust anyone to hand-copy them, this emits
+# `desktop/src-tauri/src/menu_model.json`, which menu.rs pulls in with
+# include_str!.
+#
+# Same shape as scripts/codegen-types, and for the same reason: the repo has a
+# scar from two files describing one thing (the wizard and Settings drifted to
+# different default Ollama models). --check makes the drift a CI failure rather
+# than something noticed later.
+#
+#   ./scripts/codegen-menu           regenerate
+#   ./scripts/codegen-menu --check   fail if the committed file is stale
+set -euo pipefail
+
+REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+OUT="$REPO/desktop/src-tauri/src/menu_model.json"
+TMP="$(mktemp)"
+trap 'rm -f "$TMP"' EXIT
+
+# The model imports React-free modules only, but it does import types from
+# components — so run it through vite-node rather than plain tsx, which is what
+# the web workspace already has available.
+(cd "$REPO/web" && npx vite-node scripts/emit-menu-model.mts) > "$TMP"
+
+if [ "${1:-}" = "--check" ]; then
+  if ! diff -q "$OUT" "$TMP" >/dev/null 2>&1; then
+    echo "$(basename "$OUT") is stale — run ./scripts/codegen-menu and commit the result" >&2
+    diff -u "$OUT" "$TMP" || true
+    exit 1
+  fi
+  echo "✓ menu model in sync"
+  exit 0
+fi
+
+mv "$TMP" "$OUT"
+echo "✓ wrote $OUT"

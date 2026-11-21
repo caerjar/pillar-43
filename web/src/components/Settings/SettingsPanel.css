@@ -1,0 +1,1415 @@
+/* ── Section heading ─────────────────────────────────────────────────────── */
+
+.sp-section {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wider);
+  padding: var(--space-4) 0 var(--space-2);
+}
+
+.sp-section::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border-subtle);
+}
+
+/* ── Restart badge ───────────────────────────────────────────────────────── */
+
+.sp-restart-badge {
+  font-size: 9px;
+  padding: 1px 5px;
+  background: var(--warning-dim);
+  color: var(--warning);
+  border-radius: var(--radius-sm);
+  font-weight: var(--weight-medium);
+  text-transform: none;
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+
+/* ── Row ─────────────────────────────────────────────────────────────────── */
+
+.sp-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.sp-row__label-group {
+  flex: 1;
+  min-width: 0;
+}
+
+.sp-row__label-line {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.sp-row__label {
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+  font-weight: var(--weight-medium);
+}
+
+.sp-row__description {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  margin-top: 2px;
+  line-height: var(--leading-normal);
+  overflow-wrap: break-word;
+}
+
+.sp-row__control {
+  flex-shrink: 0;
+  max-width: 58%;
+  min-width: 0;
+}
+
+/* ── Toggle ──────────────────────────────────────────────────────────────── */
+
+.sp-toggle {
+  width: 40px;
+  height: 22px;
+  border-radius: 11px;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  transition: background 0.2s;
+}
+
+.sp-toggle--on {
+  background: var(--accent);
+}
+
+.sp-toggle--off {
+  background: var(--bg-active);
+}
+
+.sp-toggle__thumb {
+  position: absolute;
+  top: 3px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  transition: left 0.2s;
+}
+
+.sp-toggle--on .sp-toggle__thumb {
+  left: 21px;
+}
+
+.sp-toggle--off .sp-toggle__thumb {
+  left: 3px;
+}
+
+/* ── Select field ────────────────────────────────────────────────────────── */
+
+.sp-select {
+  background: var(--bg-active);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 3px 8px;
+  font-size: 12px;
+  cursor: pointer;
+  outline: none;
+}
+
+/* ── Path display ────────────────────────────────────────────────────────── */
+
+.sp-path-display {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 200px;
+}
+
+.sp-path-value {
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  direction: rtl;
+  text-align: left;
+}
+
+.sp-path-copy {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 11px;
+  color: var(--text-muted);
+  padding: 1px 4px;
+  flex-shrink: 0;
+}
+
+.sp-path-copy--copied {
+  color: var(--accent);
+}
+
+
+/* ── Translation lang input ──────────────────────────────────────────────── */
+
+.sp-lang-view {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sp-lang-value {
+  font-size: 12px;
+  min-width: 60px;
+  text-align: right;
+}
+
+.sp-lang-value--set {
+  color: var(--text-primary);
+}
+
+.sp-lang-value--unset {
+  color: var(--text-muted);
+}
+
+.sp-lang-edit-btn {
+  padding: 3px 8px;
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 11px;
+}
+
+.sp-lang-edit-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.sp-lang-input {
+  width: 130px;
+  background: var(--bg-active);
+  color: var(--text-primary);
+  border: 1px solid var(--accent-dim);
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 12px;
+  outline: none;
+}
+
+.sp-btn-save-sm {
+  padding: 4px 10px;
+  background: var(--accent);
+  color: var(--on-accent);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.sp-btn-cancel-sm {
+  padding: 4px 8px;
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 11px;
+}
+
+/* ── Text field row input ────────────────────────────────────────────────── */
+
+.sp-input {
+  width: 180px;
+  background: var(--bg-active);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 12px;
+  outline: none;
+}
+
+.sp-input--mono {
+  font-family: var(--font-mono);
+}
+
+.sp-input--narrow {
+  width: 90px;
+}
+
+/* ── Notifications section ───────────────────────────────────────────────── */
+
+.sp-notif-loading {
+  font-size: 11px;
+  color: var(--text-muted);
+  padding: 4px 0;
+}
+
+.sp-notif-hint {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+
+.sp-notif-channel-heading {
+  margin: 12px 0 4px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.sp-notif-placeholder {
+  font-size: 11px;
+  color: var(--text-muted);
+  padding: 6px 8px;
+  background: var(--bg-surface);
+  border-radius: 4px;
+  border: 1px solid var(--border-subtle);
+  line-height: 1.5;
+}
+
+.sp-test-result {
+  margin-top: 8px;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+}
+
+.sp-test-result--ok {
+  background: var(--success-dim, #d4edda);
+  color: var(--success, #155724);
+}
+
+.sp-test-result--error {
+  background: var(--error-dim);
+  color: var(--error);
+}
+
+/* ── Password input ──────────────────────────────────────────────────────── */
+
+.sp-password-wrap {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.sp-password-inner {
+  position: relative;
+}
+
+.sp-password-input {
+  width: 160px;
+  background: var(--bg-active);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 4px 24px 4px 8px;
+  font-size: 12px;
+  outline: none;
+  font-family: var(--font-mono);
+}
+
+.sp-password-reveal {
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 11px;
+  color: var(--text-muted);
+  padding: 0;
+}
+
+/* ── Send test button ────────────────────────────────────────────────────── */
+
+.sp-btn-test {
+  padding: 4px 10px;
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 11px;
+}
+
+.sp-btn-test--idle {
+  cursor: pointer;
+  opacity: 1;
+}
+
+.sp-btn-test--loading {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* ── Main panel ──────────────────────────────────────────────────────────── */
+
+.sp-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.sp-panel-loading {
+  padding: 16px;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.sp-header {
+  padding: var(--space-2) var(--space-4);
+  border-bottom: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.sp-header__title {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--text-primary);
+}
+
+.sp-header__status {
+  margin-left: auto;
+  font-size: var(--text-xs);
+}
+
+.sp-status-saving {
+  color: var(--text-muted);
+}
+
+.sp-status-saved {
+  color: var(--success);
+}
+
+.sp-status-error {
+  color: var(--error);
+}
+
+.sp-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 var(--space-4) var(--space-8);
+}
+
+/* Full-width grouped layout (Settings renders full-width in the center slot).
+   Groups flow 1 col when narrow → 2-3 cols when wide. */
+.sp-body--grid {
+  padding: 0 0 var(--space-8);
+}
+
+.sp-groups {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  gap: var(--space-4);
+  align-items: start;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: var(--space-4);
+}
+
+.sp-group {
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  background: var(--bg-panel);
+  overflow: hidden;
+}
+
+.sp-group__title {
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wider);
+  color: var(--text-muted);
+  background: var(--bg-active);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.sp-group__body {
+  padding: 0 var(--space-4) var(--space-3);
+}
+
+.sp-mount-loading {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  padding: var(--space-2) 0;
+}
+
+/* ── Skills list ─────────────────────────────────────────────────────────── */
+
+.sp-skills-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.sp-skill-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--border-subtle);
+  opacity: 1;
+}
+
+.sp-skill-row--disabled {
+  opacity: 0.55;
+}
+
+.sp-skill-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.sp-skill-name-line {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.sp-skill-name {
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+  font-weight: var(--weight-medium);
+}
+
+.sp-skill-source {
+  font-size: 9px;
+  padding: 1px 5px;
+  border-radius: var(--radius-sm);
+}
+
+.sp-skill-source--user {
+  background: var(--bg-surface);
+  color: var(--text-muted);
+}
+
+.sp-skill-source--builtin {
+  background: var(--accent-subtle);
+  color: var(--accent);
+}
+
+.sp-skill-description {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  margin-top: 1px;
+}
+
+.sp-skills-empty {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  padding: var(--space-2) 0;
+}
+
+/* ── Config note ─────────────────────────────────────────────────────────── */
+
+.sp-config-note {
+  margin-top: var(--space-5);
+  padding: var(--space-3);
+  background: var(--bg-surface);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+}
+
+.sp-config-note__text {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  line-height: var(--leading-relaxed);
+}
+
+.sp-config-note__code {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+}
+
+/* ── Panel-level error ───────────────────────────────────────────────────── */
+
+.sp-panel-error {
+  margin-top: 10px;
+  padding: 8px 10px;
+  background: var(--error-dim);
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  color: var(--error);
+}
+
+.sp-voice-profile-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.sp-voice-profile-stat {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-left: 4px;
+}
+
+/* ── Library health ─────────────────────────────────────────────────────────── */
+
+.sp-library-health {
+  padding: 6px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sp-library-loading {
+  font-size: 11px;
+  color: var(--text-muted);
+  padding: 4px 0;
+}
+
+.sp-mount-row {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  font-size: 12px;
+}
+
+.sp-mount-indicator {
+  font-size: 11px;
+  font-weight: 700;
+  min-width: 14px;
+}
+
+.sp-mount-indicator--ok    { color: var(--accent); }
+.sp-mount-indicator--warn  { color: var(--text-muted); }
+.sp-mount-indicator--error { color: var(--error); }
+
+.sp-mount-label {
+  font-family: monospace;
+  font-size: 11px;
+  color: var(--text-primary);
+  min-width: 80px;
+}
+
+.sp-mount-detail {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.sp-btn-init {
+  align-self: flex-start;
+  margin-top: 4px;
+  padding: 4px 12px;
+  background: var(--accent);
+  color: var(--on-accent);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+/* ── AI Models section ──────────────────────────────────────────────────────── */
+
+.sp-ai-notice {
+  font-size: var(--text-xs);
+  padding: 6px 10px;
+  border-radius: 4px;
+  margin: 4px 0 8px;
+  line-height: 1.5;
+}
+
+.sp-ai-notice--warn {
+  background: var(--warning-dim, rgba(240, 180, 40, 0.12));
+  color: var(--warning);
+  border-left: 2px solid var(--warning);
+}
+
+.sp-ai-notice--info {
+  background: var(--accent-subtle, rgba(100, 160, 255, 0.08));
+  color: var(--text-secondary);
+  border-left: 2px solid var(--accent-dim);
+}
+
+.sp-provider-test {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sp-ping-ok {
+  font-size: 11px;
+  color: var(--success);
+}
+
+.sp-ping-error {
+  font-size: 11px;
+  color: var(--error);
+  cursor: help;
+}
+
+/* ── Task Model Routing section ─────────────────────────────────────────────── */
+
+.sp-task-routing-hint {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+
+.sp-task-routing-header {
+  display: grid;
+  grid-template-columns: 75px 1fr 1fr 20px;
+  gap: 6px;
+  padding: 0 0 4px;
+  border-bottom: 1px solid var(--border-subtle);
+  margin-bottom: 2px;
+}
+
+.sp-task-routing-col-label {
+  font-size: 10px;
+  font-weight: var(--weight-semibold);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.sp-task-routing-row {
+  display: grid;
+  grid-template-columns: 75px 1fr 1fr 20px;
+  gap: 6px;
+  align-items: center;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.sp-task-routing-row--active {
+  background: var(--bg-surface);
+}
+
+.sp-task-routing-label {
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+}
+
+.sp-task-routing-select {
+  font-size: 11px;
+  padding: 3px 6px;
+  background: var(--bg-active);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  cursor: pointer;
+  width: 100%;
+  min-width: 0;
+}
+
+.sp-task-routing-model-wrap {
+  position: relative;
+}
+
+.sp-task-routing-model {
+  font-size: 11px;
+  padding: 3px 6px;
+  background: var(--bg-active);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  width: 100%;
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+.sp-task-routing-clear {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  border-radius: 3px;
+  font-size: 14px;
+  line-height: 1;
+  padding: 0;
+}
+
+.sp-task-routing-clear:hover:not(.sp-task-routing-clear--disabled) {
+  background: var(--error-dim);
+  color: var(--error);
+}
+
+.sp-task-routing-clear--disabled {
+  opacity: 0.25;
+  cursor: default;
+}
+
+/* ── Excluded extensions chip editor ─────────────────────────────────────── */
+
+.sp-ext-editor {
+  width: 100%;
+}
+
+.sp-ext-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+  padding: 4px 6px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg-active);
+  min-height: 32px;
+}
+
+.sp-ext-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 6px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-family: var(--font-mono, monospace);
+}
+
+.sp-ext-chip__remove {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1;
+  padding: 0;
+  margin-left: 1px;
+}
+
+.sp-ext-chip__remove:hover {
+  color: var(--error);
+}
+
+.sp-ext-input {
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: 11px;
+  font-family: var(--font-mono, monospace);
+  width: 60px;
+  padding: 2px 2px;
+}
+
+.sp-ext-input::placeholder {
+  color: var(--text-muted);
+}
+
+/* ── Excluded extensions full-width block ────────────────────────────────── */
+
+.sp-ext-block {
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.sp-ext-block__label {
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+  font-weight: var(--weight-medium);
+  margin-bottom: 2px;
+}
+
+.sp-ext-block__desc {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  line-height: var(--leading-normal);
+  overflow-wrap: break-word;
+}
+
+/* ── Pending path changes banner ─────────────────────────────────────────── */
+
+.sp-pending-banner {
+  background: #fff3cd;
+  border: 1px solid #ffc107;
+  border-radius: 6px;
+  padding: 16px;
+  margin-bottom: 24px;
+  display: flex;
+  gap: 12px;
+}
+
+.sp-pending-banner__icon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.sp-pending-banner__content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sp-pending-banner__title {
+  font-weight: 600;
+  color: #856404;
+}
+
+.sp-pending-banner__subtitle {
+  font-size: var(--text-sm);
+  color: #856404;
+}
+
+.sp-pending-banner__command {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fff;
+  border: 1px solid #ffc107;
+  border-radius: 4px;
+  padding: 8px 12px;
+}
+
+.sp-pending-banner__command code {
+  flex: 1;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: #212529;
+  overflow-x: auto;
+}
+
+.sp-pending-banner__note {
+  font-size: var(--text-xs);
+  color: #856404;
+}
+
+.sp-btn-copy {
+  background: #ffc107;
+  border: none;
+  color: #212529;
+  padding: 4px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.sp-btn-copy:hover {
+  background: #e0a800;
+}
+
+.sp-btn-secondary-sm {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: var(--text-sm);
+  align-self: flex-start;
+}
+
+.sp-btn-secondary-sm:hover {
+  background: var(--bg-hover);
+}
+
+/* ── Path editing ────────────────────────────────────────────────────────── */
+
+.sp-path-edit {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.sp-path-input {
+  flex: 1;
+  min-width: 300px;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg-active);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+}
+
+.sp-path-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.sp-btn-primary-sm {
+  background: var(--accent);
+  border: none;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: var(--text-sm);
+  font-weight: 500;
+}
+
+.sp-btn-primary-sm:hover {
+  opacity: 0.9;
+}
+
+.sp-btn-primary-sm:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.sp-btn-cancel-sm {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: var(--text-sm);
+}
+
+.sp-btn-cancel-sm:hover {
+  background: var(--bg-hover);
+}
+
+.sp-path-error {
+  width: 100%;
+  color: var(--error);
+  font-size: var(--text-sm);
+  margin-top: 4px;
+}
+
+.sp-btn-ghost-sm {
+  background: transparent;
+  border: none;
+  color: var(--accent);
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: var(--text-sm);
+}
+
+.sp-btn-ghost-sm:hover {
+  background: var(--bg-hover);
+}
+
+.sp-pending-banner__actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.sp-btn-cancel-sm {
+  background: transparent;
+  border: 1px solid var(--error, #dc3545);
+  color: var(--error, #dc3545);
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: var(--text-sm);
+}
+
+.sp-btn-cancel-sm:hover {
+  background: var(--error, #dc3545);
+  color: white;
+}
+
+/* ── Extra Libraries ──────────────────────────────────────────────────────── */
+
+.sp-section-divider {
+  height: 1px;
+  background: var(--border-subtle);
+  margin: 24px 0;
+}
+
+.sp-subsection-title {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 16px;
+}
+
+.sp-add-library-section {
+  margin-top: 16px;
+  padding: 16px 0;
+}
+
+.sp-btn-add-library {
+  background: var(--bg-surface);
+  border: 1px dashed var(--border);
+  color: var(--accent);
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  width: 100%;
+  transition: all 0.15s;
+}
+
+.sp-btn-add-library:hover {
+  background: var(--bg-hover);
+  border-color: var(--accent);
+}
+
+.sp-add-library-form {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px;
+  margin-top: 16px;
+}
+
+.sp-add-library-form__title {
+  font-weight: 600;
+  font-size: var(--text-base);
+  margin-bottom: 16px;
+  color: var(--text-primary);
+}
+
+.sp-add-library-form__fields {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.sp-add-library-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sp-add-library-label {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.sp-add-library-input {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg-active);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+}
+
+.sp-add-library-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.sp-add-library-hint {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+.sp-add-library-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.sp-btn-remove-sm {
+  background: transparent;
+  border: 1px solid var(--error, #dc3545);
+  color: var(--error, #dc3545);
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: var(--text-sm);
+}
+
+.sp-btn-remove-sm:hover {
+  background: var(--error, #dc3545);
+  color: white;
+}
+
+/* ── Background Jobs section ──────────────────────────────────────────── */
+
+.sp-bgjobs {
+  display: flex;
+  flex-direction: column;
+}
+
+.sp-bgjobs__banner {
+  margin: 8px 14px;
+  padding: 10px 12px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.sp-bgjobs__banner code {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  background: var(--bg-panel);
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+
+.sp-row--bgjob {
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.sp-bgjobs__schedule {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  margin-top: 4px;
+}
+
+.sp-bgjobs__ai-tag {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 5px;
+  background: var(--accent);
+  color: white;
+  font-size: 9px;
+  font-weight: 700;
+  border-radius: 3px;
+  letter-spacing: 0.05em;
+  vertical-align: middle;
+}
+
+.sp-bgjobs__plumbing {
+  font-size: 9px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-top: 4px;
+  text-align: center;
+}
+
+.sp-toggle--disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ── Sources section (Sprint 99 part A) ───────────────────────────────────── */
+.sp-sources-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+}
+
+.sp-sources-loading,
+.sp-sources-empty {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  font-style: italic;
+  padding: var(--space-2) 0;
+}
+
+.sp-sources-error {
+  font-size: var(--text-sm);
+  color: var(--error);
+  padding: var(--space-2) 0;
+}
+
+.sp-source-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-3);
+  background: var(--bg-surface);
+}
+
+.sp-source-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-2);
+}
+
+.sp-source-name {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--text-primary);
+}
+
+.sp-source-status {
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.sp-source-status--ok {
+  background: var(--accent-subtle);
+  color: var(--accent);
+}
+
+.sp-source-status--idle {
+  background: var(--bg-surface);
+  color: var(--text-muted);
+}
+
+.sp-source-meta {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: var(--space-2);
+}
+
+.sp-source-meta-label {
+  font-weight: var(--weight-medium);
+}
+
+.sp-source-count {
+  opacity: 0.8;
+}
+
+.sp-source-pending {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+  padding: var(--space-2);
+  background: var(--warning-dim);
+  border: 1px solid var(--warning);
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+}
+
+.sp-source-pending-badge {
+  font-weight: 600;
+  color: var(--warning);
+  font-family: var(--font-mono);
+}
+
+.sp-source-pending-detail {
+  color: var(--text-secondary);
+}
+
+.sp-source-pending-when {
+  opacity: 0.7;
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+.sp-source-instructions {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  background: var(--bg-base, rgba(0, 0, 0, 0.03));
+  color: var(--text-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2);
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin: 0 0 var(--space-2) 0;
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.sp-source-actions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+/* ── Preferences window (SettingsWindow.tsx) ──────────────────────────────────
+   Settings became a modal on 2026-08-30. The full-width `.sp-panel` grid above
+   is gone with the centre-pane takeover; what remains here is a two-column
+   sidebar/content layout that owns its own scrolling, which is why the Modal
+   is given bodyPadding={0}. */
+
+.sp-window {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.sp-window__nav {
+  flex: 0 0 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px 8px;
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+}
+
+.sp-window__navitem {
+  appearance: none;
+  background: none;
+  border: none;
+  border-radius: 4px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 13px;
+  padding: 7px 10px;
+  text-align: left;
+}
+
+.sp-window__navitem:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.sp-window__navitem--active {
+  background: var(--bg-active);
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.sp-window__content {
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+  padding: 16px 20px 20px;
+  position: relative;
+}
+
+.sp-window__status {
+  position: absolute;
+  right: 20px;
+  top: 18px;
+  font-size: 12px;
+}
+
+/* Narrow windows: stack the nav above the content rather than squeezing it. */
+@media (max-width: 760px) {
+  .sp-window { flex-direction: column; }
+  .sp-window__nav {
+    flex: 0 0 auto;
+    flex-direction: row;
+    overflow-x: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+  .sp-window__navitem { white-space: nowrap; }
+}

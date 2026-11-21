@@ -1,0 +1,156 @@
+repos:
+  - repo: local
+    hooks:
+      - id: ruff-format
+        name: ruff format (python layout)
+        language: python
+        additional_dependencies: ["ruff==0.16.1"]
+        entry: ruff format --check
+        types: [python]
+
+      - id: ruff
+        name: ruff (python lint)
+        # `language: python` + a pinned additional_dependency means pre-commit
+        # builds its own venv — so the gate no longer depends on whichever ruff
+        # happens to be on the developer's PATH. Before this it ran the host
+        # binary (0.16.1 here) while the project pinned 0.9.1 and CI installed
+        # ruff unpinned: three versions, three possible answers for one commit.
+        # Keep this rev in step with api/requirements-dev.txt.
+        language: python
+        additional_dependencies: ["ruff==0.16.1"]
+        entry: ruff check
+        types: [python]
+        pass_filenames: true
+
+      - id: tsc
+        name: tsc (typescript typecheck)
+        language: system
+        entry: bash -c 'cd web && npx tsc --noEmit'
+        pass_filenames: false
+        files: \.(ts|tsx)$
+
+      - id: vitest
+        name: vitest (frontend unit tests)
+        language: system
+        entry: bash -c 'cd web && npm test -- --run'
+        pass_filenames: false
+        files: \.(ts|tsx)$
+
+      - id: eslint
+        name: eslint (frontend lint — gated)
+        language: system
+        # Gate at the MEASURED warning count. New warnings or any errors block
+        # the commit. This is a ratchet: it may only go down. If you are about
+        # to raise it, fix the offender instead.
+        # 11 is the ceiling (4 measured 2026-11-20 after the personal-app prune);
+        # jsx-a11y is at zero. Keep this in step with ci.yml and release.yml.
+        entry: bash -c 'cd web && npx eslint src --max-warnings=11'
+        pass_filenames: false
+        files: \.(ts|tsx)$
+
+      - id: module-readmes
+        name: module readmes (drift check)
+        language: system
+        # README row counts in api/routes/, api/services/,
+        # web/src/components/, web/src/hooks/ must match actual file counts
+        # within tolerance (see scripts/check_module_readmes.py:TOLERANCE).
+        # --strict makes drift a hard block — run /codify-readmes to fix.
+        entry: python3 scripts/check_module_readmes.py --strict
+        pass_filenames: false
+        # Always runs (cheap, no API calls), so drift is surfaced on every
+        # commit even when no module files changed.
+        always_run: true
+
+      - id: menu-model-drift
+        name: native menu model ↔ menuModel.ts drift
+        language: system
+        # desktop/src-tauri/src/menu_model.json is GENERATED from
+        # web/src/lib/menu/menuModel.ts and committed, because the Tauri shell
+        # needs the labels before any page exists and Rust cannot import TS.
+        # Two files describing one thing is how the wizard and Settings drifted
+        # to different default Ollama models; this makes the same mistake a
+        # failed commit instead. Fix with `./scripts/codegen-menu`.
+        entry: ./scripts/codegen-menu --check
+        pass_filenames: false
+        files: ^(web/src/lib/menu/|desktop/src-tauri/src/menu_model\.json)
+
+      - id: mypy
+        name: mypy (python type gate)
+        language: system
+        # Runs mypy inside the reused test container (api/mypy.ini). Lenient
+        # config with a shrinking per-module type-debt allowlist — green today,
+        # catches type errors in every non-debt module. Retire debt via
+        # ./scripts/mypy-api <path>. Runs whenever any api/ .py changes.
+        entry: ./scripts/mypy-api
+        pass_filenames: false
+        files: ^api/.+\.py$
+
+      - id: test-api-changed
+        name: test-api-changed (backend tests for changed .py files)
+        language: system
+        # Step 5.2: change-scoped backend test gate. Derives a -k filter
+        # from the staged Python diff and runs only the matching tests.
+        # No .py changes → fast skip. See scripts/test-api-changed for
+        # the keyword-derivation rules. Full CI sweep still runs on PR.
+        entry: ./scripts/test-api-changed
+        pass_filenames: false
+        files: ^api/.+\.py$
+
+      - id: route-docstring-drift
+        name: route docstring ↔ handler drift
+        language: system
+        # Lint: every endpoint listed in a route module's docstring
+        # must have a matching @router.<verb>(...) decorator in the
+        # same file (and vice versa). Catches the audit-2026-05-20-
+        # Critical-#2 class (phantom `/outbox/flush` endpoint
+        # documented but not implemented).
+        entry: python3 scripts/check_route_docstring_drift.py --strict
+        pass_filenames: false
+        # Cheap (stdlib AST + regex); always runs.
+        always_run: true
+
+      - id: route-reachability
+        name: user-facing routes have a frontend caller
+        language: system
+        # Five times in this repo a mechanism shipped complete and tested
+        # while the thing that made it REACHABLE did not: is_research with
+        # no setter, open_topic with no caller, peer_derived with no
+        # producer, the peer prompt that did not exist, patterns/accept with
+        # no UI. Every one had passing tests,
+        # because tests covered the piece and not the join.
+        #
+        # A hook rather than a pytest test: the api test container mounts
+        # only ./api, so web/src is invisible from inside it and such a
+        # test passes by finding nothing.
+        entry: python3 scripts/check_route_reachability.py
+        pass_filenames: false
+        always_run: true
+
+      - id: path-traversal-lint
+        name: path-traversal heuristic
+        language: system
+        # Heuristic AST lint: filesystem joins (`Path() / x`,
+        # `os.path.join(..., x)`) where the RHS looks attacker-
+        # controlled (raw[...], fmeta.get(...), names like `name`/
+        # `filename`/`path`) must have a sanitization guard in the
+        # same function. Catches the audit-2026-05-20-Critical-#1
+        # class (`polling.py:173`). Allowlist with `# noqa: TRAVERSAL`.
+        entry: python3 scripts/check_path_traversal.py --strict
+        pass_filenames: false
+        always_run: true
+
+      - id: function-reference-drift
+        name: function reference drift (the maintainer notes / docs)
+        language: system
+        # AST + heuristic lint: dotted refs like `module.symbol` or
+        # `commons.outbox.drain` in the maintainer notes / MANUAL.md / plans/
+        # / docs/ must resolve in api/ (either as a def/class/method
+        # or as a real module path). Skips DB-table refs
+        # (`files.authorship`), instance methods (`client.foo`),
+        # stdlib refs, frontend `api.X`. Allowlist per-line:
+        # `<!-- noqa: FNREF -->`. Promoted to --strict 2026-05-20
+        # after calibration (class-method indexing + instance-name
+        # allowlist + DB-table allowlist).
+        entry: python3 scripts/check_function_reference_drift.py --strict
+        pass_filenames: false
+        always_run: true

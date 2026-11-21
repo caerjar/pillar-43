@@ -1,0 +1,8 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "remote-picker",
+  "description": "The native folder picker, granted only to the loopback origin this shell itself launched. The window is pinned to that exact origin by an on_navigation allowlist in main.rs — without it this wildcard would extend to anything that navigated the webview, which withGlobalTauri and a null CSP make easy.",
+  "windows": ["main"],
+  "remote": { "urls": ["http://127.0.0.1:*"] },
+  "permissions": ["dialog:allow-open"]
+}

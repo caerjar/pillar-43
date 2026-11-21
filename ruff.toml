@@ -1,0 +1,175 @@
+# Ruff configuration — codifies the settings the pre-commit `ruff check`
+# hook (`.pre-commit-config.yaml`) already runs with. Adding this file makes
+# the lint config discoverable to editors and contributors; it deliberately
+# pins ruff's defaults so its presence does NOT newly fail the gate.
+# Verified: `ruff check` reports the same diagnostics with and without it.
+# Tighten `select` deliberately (and fix the fallout) rather than by accident.
+
+# Tracks the runtime the code SHIPS on — `python:3.12-slim` in both
+# api/Dockerfile and worker/Dockerfile — not whatever Python happens to run
+# ruff. A dev host on 3.13/3.14 is expected and is not a reason to bump this:
+# raising it would let 3.13+ syntax past the gate and break the containers.
+# Bump only when the Dockerfiles do.
+target-version = "py312"
+line-length = 88
+
+[lint]
+# E4/E7/E9 + F are ruff's defaults (pyflakes + the pycodestyle error subset).
+# Everything after them was added deliberately; see the deferral list below for
+# what was considered and rejected, and why.
+select = [
+    "E4", "E7", "E9", "F",
+    "B",     # flake8-bugbear — real bug classes (B904 traceback loss, B023 late-binding)
+    "SIM",   # flake8-simplify
+    "ARG",   # unused arguments (tests exempted below — see per-file-ignores)
+    "C90",   # mccabe complexity — a ratcheting ceiling, see [lint.mccabe]
+    "RET",   # flake8-return
+    "PIE",   # flake8-pie
+    "ISC",   # implicit string concatenation
+    "LOG",   # logging misuse
+    "A",     # builtin shadowing
+    "PERF",  # perflint
+    "RSE",   # raise() parens
+    "FLY",   # static join → f-string
+    "RUF",   # ruff-specific, incl. RUF100 unused-noqa
+    "Q",     # quote style — free now that `ruff format` normalises it
+]
+
+# `ruff format` owns layout. Run it via `ruff format .`; pre-commit and CI
+# enforce `ruff format --check`.
+#
+# Deliberately NOT selected alongside the formatter:
+#   COM (1066) and ISC001 — ruff documents both as conflicting with the
+#     formatter; enabling them fights it on every run.
+#   I (isort, 281) — this codebase has load-bearing import ORDER. api/main.py
+#     imports routers after `app = FastAPI(...)` because @app.on_event
+#     deadlocks otherwise (hence its E402 exemption), and the re-export shims
+#     depend on ordering too. isort would reorder all of it. Any adoption
+#     needs per-file exemptions worked out first, not a blanket enable.
+#   E501 (391) — the formatter does not split long strings or comments, so
+#     this is not free even after formatting. Separate pass.
+#   UP (155) — autofixable and safe on py312, but a second large mechanical
+#     diff; keep it off the formatting commit so that stays reviewable.
+
+# Rules inside a selected family that are wrong for this codebase.
+ignore = [
+    # Ambiguous-unicode. The prose in this repo deliberately uses typographic
+    # characters — em dashes, arrows (the pre-commit hook names contain "↔"),
+    # curly quotes. These fire only on comments/docstrings/strings in tests and
+    # tools, and "fixing" them would mean degrading the writing.
+    "RUF001", "RUF002", "RUF003",
+    # Rewriting 23 accumulator loops into comprehensions is a readability call,
+    # not a correctness one, and each rewrite is a chance to change behaviour in
+    # a loop with side effects. Deferred deliberately — revisit with the
+    # formatter adoption, not as part of a behaviour-preserving pass.
+    "PERF401",
+    # Collapsible-if. 12 hits, and ruff itself declines to autofix 9 of them
+    # because a comment sits between the two conditions — "fixing" those would
+    # delete the explanation. The rest are stepwise AST narrowing in the drift
+    # linters (isinstance -> attr -> id -> args), where one long `and` chain
+    # reads worse than the ladder. Judged not worth its false-positive rate.
+    "SIM102",
+]
+
+# A CEILING, not a target. It sits exactly at the worst function in the tree,
+# so it is green today while making any *new* complexity growth a hard error.
+# Each decrement must be a true statement about the codebase at the moment it
+# lands. Never raise it to admit a new offender.
+#
+#   2026-08-05: 55  (update_settings was 51)
+#   2026-08-06: 44  (update_settings 51 -> 28, via declarative field tables)
+#   2026-08-07: 36  (four more splits)
+#   2026-08-07: 34  (thirteen were above 25; four remain)
+#
+# The method, and the order matters: write the characterization tests, watch
+# them fail, split, then move this number. The settings split silently dropped
+# `.strip()` on 10 of 14 fields and exactly one pre-existing test caught it —
+# the other nine now have a guard. That is the whole argument for tests-first.
+#
+# Split so far. Thirteen functions were above 25; four remain.
+#   update_settings          51 -> 25  four declarative field tables
+#                                      (passthrough+transform, enum, range,
+#                                      extension-list)
+#   _pass_file_scan          44 -> 34  `_skip_reason` predicate, the
+#                                      progress+heartbeat block that was
+#                                      duplicated in both arms, and
+#                                      `_extract_text_for_file`
+#   _build_graph_impl        39 -> 32  one `_collect_md_nodes` walker
+#   run_catalog (route)      37 -> 33  validation + stale-job reclaim
+#   _pass_summarization      29 -> 23  `_report_summarize_outcome`
+#   _pass_thread_generation  29 -> 23  `_canonicalize_topics`
+#   _extract_iwork_text      29 -> 23  `_iwork_index_xml_parts`
+#   _mine_tasks_inner        28 -> 20  metadata load + mount list
+#   _render_thread_file      28 -> 21  `_topic_connections`
+#   _human_error             28 -> <10 one classifier per provider
+#   orchestrator.run_catalog 28 -> <25 single-file path lifted whole
+#   write_periodic_review    27 -> <10 four independent section functions
+#
+# Still above 25:
+#   34  services/catalog/scan.py  _pass_file_scan
+#   33  routes/catalog/run.py     run_catalog
+#   32  routes/graph.py           _build_graph_impl
+#   31  routes/catalog/run.py     gen
+#
+# The rule that got the twelve done: cut only where a block already has one
+# entry, one exit, and at most one accumulator. Every split above fit that.
+# None of the four below does — and the difference is shared mutable state,
+# not size. `_pass_file_scan`'s changed-file arm mutates files_scanned,
+# mount_scanned and pending_writes across 105 lines; `gen` owns the SSE thread
+# lifecycle. Extracting a piece means passing most of the frame through a
+# signature or inventing a context object, which reads worse than what it
+# replaces. That is the shape the maintainer notes' 4F-B note is about. Take these only
+# with a reason beyond the number, and only after the tests exist.
+#
+# One worked example of why tests come first: `_iwork_index_xml_parts` returns
+# `list | None`, where None means ABORT THE WHOLE EXTRACTION rather than "no
+# text found" — an index.xml over 10MB uncompressed is a zip-bomb signature
+# that must not fall through to the other strategies on the same archive. A
+# plain-list return would have removed that guard silently. One of the 12
+# tests written for it beforehand pins exactly that case.
+[lint.mccabe]
+max-complexity = 34
+
+# Deliberate architecture, not debt. Each entry is an invariant that a
+# "cleanup" would break — keep the reason with the exemption so nobody
+# re-litigates it. Anything NOT listed here is expected to stay green.
+[lint.per-file-ignores]
+# 507 of the 522 ARG hits in this repo are here, and they are not debt: pytest
+# injects fixtures BY PARAMETER NAME, and monkeypatch replacements must match
+# the signature of the callee they stand in for. The argument exists precisely
+# because something else demands it. Underscore-prefixing 507 of them would
+# break fixture injection outright. The 15 real sites live in non-test code and
+# are fixed there.
+# SIM117/SIM105 are exempted for readability: nested `with` blocks in arrange
+# steps and try/except/pass in teardown read better than the "simplified" form.
+# RUF059 (41 of its 43 hits) is the same story in a different shape: `_, body =`
+# destructuring where only one half is asserted on. RUF012 is all 5 in fake stub
+# classes standing in for a service. Both are test idiom, not defects.
+"api/tests/**" = ["ARG", "SIM117", "SIM105", "RUF059", "RUF012"]
+"worker/tests/**" = ["ARG", "SIM117", "SIM105", "RUF059", "RUF012"]
+"tools/**" = ["ARG", "SIM117", "SIM105", "RUF059", "RUF012"]
+# Routers must be imported AFTER `app = FastAPI(...)` and after the
+# module-import-time DB init, which exists because @app.on_event("startup")
+# deadlocks (see the comment at the init block). Reordering breaks startup.
+"api/main.py" = ["E402"]
+
+# Re-export shims. The unused imports ARE the public surface: they preserve
+# test-patch targets (`routes.catalog.X`) and the package's import path after
+# the module→package splits. Removing them is the 4F-B rollback class — see
+# the test-patch-coupling pattern referenced from the maintainer notes. The E402s are the
+# documented "submodules imported after package symbols" ordering.
+"api/routes/catalog/__init__.py" = ["E402", "F401"]
+"api/services/vault/__init__.py" = ["F401"]
+"api/services/catalog/__init__.py" = ["F401"]
+
+# Migrations are append-only history. A migration that has run against a real
+# database is a record of what happened, not code to be improved — editing one
+# desynchronises it from every vault that already applied it. Lint it as-is.
+"api/migrations/**" = ["SIM105"]
+
+# `filter` shadows the builtin, and it stays. It is the public query-string key
+# (`GET /api/tasks?filter=open`, declared via Query() in the route) and it flows
+# through to mine_tasks by keyword. Renaming it would change the HTTP API and
+# the generated TypeScript client for a lint preference.
+"api/routes/tasks.py" = ["A002"]
+"api/services/task_miner.py" = ["A002"]

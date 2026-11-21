@@ -1,0 +1,32 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Pillar-43",
+  "version": "0.1.0",
+  "identifier": "org.pillar43.app",
+  "build": {
+    "frontendDist": "../placeholder-dist"
+  },
+  "app": {
+    "withGlobalTauri": true,
+    "windows": [],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["app", "dmg"],
+    "icon": ["icons/icon.icns"],
+    "resources": {
+      "resources/python": "python",
+      "resources/backend": "backend",
+      "resources/web": "web",
+      "resources/models": "models",
+      "resources/bin": "bin",
+      "resources/seed": "seed"
+    },
+    "macOS": {
+      "minimumSystemVersion": "12.0"
+    }
+  }
+}

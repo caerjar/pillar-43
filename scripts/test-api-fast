@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# Run the fast subset of the backend test suite.
+#
+# Excludes tests marked `slow` or `integration` (see api/pytest.ini for
+# definitions). Intended for tight agent-loop iteration: sub-minute
+# feedback before deciding to run the full suite.
+#
+# Pass-through arguments work the same as `./scripts/test-api`:
+#   ./scripts/test-api-fast              → fast subset, parallel
+#   ./scripts/test-api-fast -v
+#   ./scripts/test-api-fast -k library_status
+#   ./scripts/test-api-fast tests/test_files.py
+#
+# Measured 2026-08-05: 1261 of 1297 tests in ~25s, against ~48s for the full
+# suite. 36 are deselected — 12 `slow` and 24 `integration`; see the table in
+# api/pytest.ini for exactly which, and re-measure before editing it.
+#
+# This wrapper was a no-op for most of its life: both markers were declared in
+# pytest.ini and used zero times, so it ran the identical set as
+# `./scripts/test-api` while reading as though it filtered.
+
+set -euo pipefail
+
+# Delegate to test-api with a marker filter prepended. Any user-supplied -m
+# would compose with this via pytest's marker parser; for clean semantics
+# just pass everything through.
+exec "$(dirname "$0")/test-api" -m "not slow and not integration" "$@"

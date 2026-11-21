@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+# Generate web/src/lib/api/_generated.ts from the FastAPI OpenAPI schema.
+#
+# Runs offline: uses the test container (which has all backend deps) to
+# import the FastAPI app and dump openapi.json without needing a live
+# server. Then runs openapi-typescript on the dump.
+#
+# Usage: ./scripts/codegen-types
+#
+# Re-run whenever a backend Pydantic model or response shape changes.
+# CI should diff the result; an uncommitted regen indicates drift.
+
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+OPENAPI_JSON="$ROOT/web/openapi.json"
+GEN_TS="$ROOT/web/src/lib/api/_generated.ts"
+
+echo "→ Ensuring test api container is up..."
+# shellcheck source=lib/test-container.sh
+source "$ROOT/scripts/lib/test-container.sh"
+ensure_test_container
+
+echo "→ Dumping openapi.json from FastAPI app..."
+"${DC[@]}" exec -T api python -c "
+import json, sys
+from main import app
+sys.stdout.write(json.dumps(app.openapi()))
+" > "$OPENAPI_JSON"
+
+# Sanity check: should be valid JSON with at least one path
+python3 -c "
+import json, sys
+data = json.load(open('$OPENAPI_JSON'))
+if 'paths' not in data or not data['paths']:
+    sys.stderr.write('openapi.json missing paths\n'); sys.exit(1)
+print(f'  ✓ {len(data[\"paths\"])} routes, {len(data.get(\"components\", {}).get(\"schemas\", {}))} schemas')
+"
+
+echo "→ Generating TypeScript types..."
+cd "$ROOT/web"
+npx --no-install openapi-typescript ./openapi.json -o src/lib/api/_generated.ts >/dev/null
+
+echo "  ✓ wrote $GEN_TS"
+
+# Header reminder — front-matter for the generated file. openapi-typescript
+# already prefixes its own DO-NOT-EDIT comment; we just verify it landed.
+if ! head -3 "$GEN_TS" | grep -q "This file was auto-generated"; then
+  echo "  ⚠  expected DO-NOT-EDIT header missing in generated output"
+fi

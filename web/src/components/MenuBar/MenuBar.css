@@ -1,0 +1,75 @@
+/*
+ * Menu bar chrome.
+ *
+ * The dropdown itself is `.overflow-menu` from index.css — orphaned CSS from a
+ * removed left-panel control, already tokenised and correct in both themes.
+ * Only the anchoring is overridden here (it was right-aligned for an overflow
+ * button; a menu bar anchors left).
+ *
+ * Every colour is a semantic token from index.css. design-tokens.test.ts globs
+ * this file automatically and fails on any token that is not declared in both
+ * themes, so inventing `--menubar-*` here would break the suite immediately.
+ */
+
+.menubar {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.menubar__slot {
+  position: relative;
+}
+
+.menubar__title {
+  background: none;
+  border: none;
+  padding: 4px 10px;
+  border-radius: var(--radius-md);
+  font-family: var(--font-ui);
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background var(--t-fast), color var(--t-fast);
+}
+
+.menubar__title:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.menubar__title--open {
+  background: var(--bg-active);
+  color: var(--text-primary);
+}
+
+/* .overflow-menu is right-anchored for an overflow button; a menu bar hangs
+   from the left edge of its title. */
+.menubar__dropdown {
+  right: auto;
+  left: 0;
+  min-width: 200px;
+}
+
+.menubar__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  width: 100%;
+}
+
+/* The accelerator is a hint, not a label — it must never compete with the
+   item it belongs to. */
+.menubar__accel {
+  font-size: var(--text-2xs);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  white-space: nowrap;
+}
+
+.menubar__separator {
+  height: 1px;
+  margin: var(--space-1) 0;
+  background: var(--border-subtle);
+}

@@ -1,0 +1,138 @@
+name: pillar43
+
+services:
+  api:
+    # Docker Desktop resolves this automatically on macOS and Windows; Linux
+    # does not, so declare it and the two behave alike. It is what lets a user
+    # point Pillar-43 at a model server on their own machine — `127.0.0.1:8080`
+    # from their shell is the container's empty loopback from in here, so
+    # `config.resolve_local_base_url` rewrites loopback to this alias on read.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+      # REQUIRED. Without it Docker builds the LAST stage in the Dockerfile,
+      # which is `dev` — so the production image shipped pytest, ruff, mypy and
+      # pytest-xdist. The multi-stage split existed; nothing selected the
+      # runtime stage, so it never took effect. Verified by `pip list` in the
+      # built image.
+      target: runtime
+      args:
+        PILLAR43_API_SHA: ${PILLAR43_GIT_SHA:-unknown}
+        PILLAR43_WEB_SHA: ${PILLAR43_GIT_SHA:-unknown}
+        PILLAR43_BUILT_AT: ${PILLAR43_BUILT_AT:-unknown}
+    restart: unless-stopped
+    ports:
+      # Host port is API_PORT (default 8002 — 8000/8001 are commonly taken).
+      # Set API_PORT in .env to move it. The CONTAINER port stays 8000 always:
+      # internal service calls (web proxy, worker) address `api:8000` and must
+      # not follow the host binding.
+      - "127.0.0.1:${API_PORT:-8002}:8000"
+    volumes:
+      - ${LIBRARY_ROOT}:/library
+      - ${NOTES_PATH}:/notes
+      - ${GENERATED_PATH}:/generated
+      # Internal application state (SQLite DB) lives in a named volume, NOT a
+      # bind mount. macOS Docker bind mounts go through VirtioFS / gRPC FUSE,
+      # which doesn't reliably support SQLite's WAL mmap or rollback-journal
+      # fcntl semantics — that's what produced the disk-I/O / locked /
+      # malformed bugs we chased for days. Named volumes use Docker's native
+      # storage, where SQLite works correctly.
+      - pillar43_data:/data
+      # Project root, READ-ONLY, plus the two files the api genuinely writes.
+      # The Settings UI updates libraries.conf and docker-compose.override.yml
+      # in-process (paths pinned by LIBRARIES_CONFIG_PATH /
+      # DOCKER_OVERRIDE_PATH below); the read-only root is only read.
+      #
+      # This was `.:/app/host_root:rw` — the entire repository writable by the
+      # api container, including .git, .env, and every source file — because
+      # of one constraint: a bind-mounted FILE cannot be deleted from inside a
+      # container (EBUSY), and the regen path used to delete the override when
+      # the last library was removed. That path now writes an inert
+      # comment-only file instead, so the narrow mount below is possible.
+      #
+      # Both file mounts REQUIRE their source to exist on the host. Docker does
+      # not error on a missing bind-mount source — it creates a directory
+      # there. setup.sh pre-creates both; do not remove that.
+      # ── iCloud Drive (optional, macOS only) ──────────────────────────────
+      # Deliberately commented out rather than variable-driven. Docker answers
+      # a MISSING bind-mount source by silently creating a DIRECTORY there, so
+      # an always-present mount with a placeholder path would scatter empty
+      # folders on every machine that isn't a Mac with iCloud — the same trap
+      # documented for libraries.conf in the maintainer notes.
+      #
+      # Uncomment BOTH lines here and the matching pair under `worker`, then
+      # restart. The connector reads the folder; it cannot download files
+      # macOS has evicted (that needs brctl on the host) and will report how
+      # many it skipped.
+      # - "${HOME}/Library/Mobile Documents/com~apple~CloudDocs:/icloud:ro"
+      - .:/app/host_root:ro
+      - ./libraries.conf:/app/host_root/libraries.conf:rw
+      - ./docker-compose.override.yml:/app/host_root/docker-compose.override.yml:rw
+    # Parameterised so a second Pillar-43 project can inject its OWN
+    # identity. `--env-file` alone is not enough: it drives ${VAR}
+    # substitution in this file, while `env_file:` decides what is
+    # injected INTO the container. Left hardcoded, a second instance
+    # inherits the first's identity and bot token — so both
+    # act as the same peer through the same bot, silently.
+    env_file:
+      - ${PILLAR43_ENV_FILE:-.env}
+    environment:
+      - LIBRARY_ROOT=/library
+      - NOTES_PATH=/notes
+      - GENERATED_PATH=/generated
+      - DATA_PATH=/data
+      - EXTRA_LIBRARIES_DIR=/libraries
+      # - ICLOUD_PATH=/icloud
+      # Host-side paths (for "Copy path" in the UI to give Finder-ready paths)
+      - HOST_LIBRARY_ROOT=${LIBRARY_ROOT}
+      - HOST_NOTES_PATH=${NOTES_PATH}
+      - HOST_GENERATED_PATH=${GENERATED_PATH}
+      # In-container paths for libraries.conf + docker-compose.override.yml
+      # (services/libraries_config.py reads/writes these).
+      - LIBRARIES_CONFIG_PATH=/app/host_root/libraries.conf
+      - DOCKER_OVERRIDE_PATH=/app/host_root/docker-compose.override.yml
+      # TrustedHostMiddleware host-header allowlist (anti-DNS-rebinding).
+      # Loopback is always allowed. The web Vite proxy (changeOrigin:true)
+      # reaches this service by its Docker name, presenting "Host: api" —
+      # without allowing it, every internal request is 400'd.
+      - ALLOWED_HOSTS=api
+    healthcheck:
+      # GET /health is defined at api/main.py:234. start_period is generous
+      # because first boot runs alembic migrations before serving.
+      test: ["CMD", "python", "-c", "import urllib.request,sys; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3); sys.exit(0)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
+    mem_limit: 3g
+
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+      args:
+        PILLAR43_GIT_SHA: ${PILLAR43_GIT_SHA:-unknown}
+        PILLAR43_BUILT_AT: ${PILLAR43_BUILT_AT:-unknown}
+    ports:
+      # Set WEB_PORT to run a second Pillar-43 project alongside the first.
+      - "127.0.0.1:${WEB_PORT:-5173}:5173"
+    depends_on:
+      - api
+    # No VITE_API_URL here, deliberately. It used to be set as a runtime env
+    # var, which did nothing: Vite substitutes `import.meta.env.*` at BUILD
+    # time and this stage serves a pre-built bundle from nginx. The frontend
+    # reaches the API same-origin — `_fetch.ts:BASE` falls back to '' and
+    # nginx proxies /api/ to `api:8000` — so each instance talks to its own
+    # API with no configuration at all, which is what makes two instances
+    # work. A comment here previously claimed the line had to track API_PORT;
+    # it did not, and could not.
+    mem_limit: 256m
+
+volumes:
+  # SQLite DB + any future internal state. Survives container recreate; cleared
+  # by `./pillar43 reset --hard`, or by `docker volume rm <project>_pillar43_data`
+  # where <project> is compose's project name (`pillar43` by default, from `name:` at the top of
+  # this file; `-p` overrides it).
+  pillar43_data:

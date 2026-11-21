@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Compatibility shim: identical to ./scripts/test-api.
+#
+# It used to opt test-api into a per-worktree compose project via
+# PILLAR43_USE_WORKTREE_COMPOSE=1. Since 2026-11-19 (f82aa7d) every tree
+# gets its own project unconditionally (scripts/lib/test-container.sh:
+# `src-test-<basename>-<path hash>`), and nothing reads that variable.
+# Kept so old commands still work; use ./scripts/test-api directly.
+#
+# Usage: ./scripts/test-with-worktree [test-api args...]
+
+set -euo pipefail
+export PILLAR43_USE_WORKTREE_COMPOSE=1
+exec "$(dirname "$0")/test-api" "$@"

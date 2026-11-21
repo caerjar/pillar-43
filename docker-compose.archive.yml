@@ -1,0 +1,16 @@
+# Local Archive (organization edition) — the archive instance.
+#
+#   docker compose -p archive --env-file .env.archive \
+#     -f docker-compose.yml -f docker-compose.archive.yml up --build -d
+#
+# Its own compose project (`archive`), its own ports, its own data volume,
+# so it never touches a running personal Pillar-43. Models run in Ollama on the host
+# (qwen3:8b for answers); the api reaches it through host.docker.internal.
+# LIBRARY_ROOT in .env.archive points at the synthetic press for development;
+# on the maintainer's machine it points at a press's real folder. Loopback only.
+
+services:
+  api:
+    environment:
+      - ORG_CONFIG=/app/orgs/press.yaml
+      - OLLAMA_URL=http://host.docker.internal:11434

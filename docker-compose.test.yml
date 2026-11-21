@@ -1,0 +1,37 @@
+services:
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+      # pytest/ruff/mypy live in the `dev` stage only — the runtime image no
+      # longer ships them.
+      target: dev
+    # Keep the container alive without running uvicorn so `./scripts/test-api`
+    # can reuse it via `docker exec pytest …`. Avoids the ~3-5s
+    # `docker compose run --rm` overhead per invocation.
+    command: ["tail", "-f", "/dev/null"]
+    environment:
+      - LIBRARY_ROOT=/library
+      - NOTES_PATH=/notes
+      - GENERATED_PATH=/generated
+      - TESTING=1
+    volumes:
+      - ./api:/app
+      - ./api/tests/fixtures:/library:ro
+      - ./api/tests/fixtures/_notes:/notes
+      - ./api/tests/fixtures/generated:/generated
+      # the synthetic press and its questions, for tests/test_press_fixtures.py
+      - ./fixtures:/fixtures:ro
+      # the repo itself, read-only, for tests/test_name_guard.py (git ls-files)
+      - .:/repo:ro
+
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+      target: build
+    environment:
+      - VITE_API_URL=http://api:8000
+    volumes:
+      - ./web:/app
+      - /app/node_modules

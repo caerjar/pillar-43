@@ -1,0 +1,428 @@
+{
+  "_note": "Compare clause text after collapsing all whitespace; the PDFs wrap lines. reversion_trigger is the event, reversion_notice_months the cure period after written request.",
+  "contracts": [
+    {
+      "file": "contract_merrowby_SaltLedger_2012.pdf",
+      "agreement_no": "LWE-A-2012-01",
+      "kind": "author",
+      "isbn": "9798900100005",
+      "title": "The Salt Ledger",
+      "language": "English",
+      "language_original": "English",
+      "territory": "the world",
+      "formats": [
+        "paperback",
+        "ebook"
+      ],
+      "term": "for the full term of copyright",
+      "reversion_trigger": "out of print after written request and cure period",
+      "reversion_notice_months": 6,
+      "grantor": "Cassia Merrowby",
+      "grantee": "Lantern Wharf Editions",
+      "translator": null,
+      "signed_on": "2012-09-14",
+      "clauses": {
+        "parties": {
+          "clause_number": 1,
+          "heading": "Parties and Work",
+          "text": "This Agreement No. LWE-A-2012-01 is made on 14 September 2012 between Cassia Merrowby (\"the Grantor\", also called the Author) and Lantern Wharf Editions of 3 Tallow Steps, Port Alder (\"the Publisher\"), concerning the work titled \"The Salt Ledger\" (ISBN 979-8-9001-0000-5) (\"the Work\")."
+        },
+        "grant": {
+          "clause_number": 2,
+          "heading": "Grant of Rights",
+          "text": "The Grantor grants to the Publisher the exclusive right to publish the Work in the English language, in the following territory: the world, in the following formats: paperback and ebook."
+        },
+        "term": {
+          "clause_number": 3,
+          "heading": "Term",
+          "text": "This grant of rights continues for the full term of copyright."
+        },
+        "royalties": {
+          "clause_number": 4,
+          "heading": "Royalties",
+          "text": "The Publisher shall pay the Grantor royalties of 10 percent of net receipts on paperback sales and 25 percent of net receipts on ebook sales. Royalties are accounted for twice a year."
+        },
+        "subsidiary": {
+          "clause_number": 5,
+          "heading": "Subsidiary Rights",
+          "text": "Serial, anthology and audio rights are held by the Publisher, with proceeds divided equally between the Author and the Publisher."
+        },
+        "reversion": {
+          "clause_number": 6,
+          "heading": "Reversion",
+          "text": "If the Work is out of print in all formats granted in Clause 2, the Grantor may request in writing that the rights revert. If, within six (6) months after the Publisher's receipt of that written request, the Publisher has not made the Work available again in at least one format granted in Clause 2, all rights granted under this Agreement revert to the Grantor automatically and without further notice. The Work is out of print when no edition of it is available for sale through ordinary trade channels. A print-on-demand edition listed with the Publisher's distributor counts as available."
+        },
+        "permissions": {
+          "clause_number": 7,
+          "heading": "Permissions",
+          "text": "The Publisher may grant permission to reprint single poems or extracts of up to fifty lines from the Work in anthologies, only with the prior written consent of the Author. Permission fees are divided equally between the Author and the Publisher."
+        },
+        "warranties": {
+          "clause_number": 8,
+          "heading": "Warranties and Credit",
+          "text": "The Grantor warrants that the Grantor holds the rights granted and that the Work does not infringe any third-party right. The Publisher shall credit the Grantor on every edition of the Work."
+        },
+        "law": {
+          "clause_number": 9,
+          "heading": "Governing Law",
+          "text": "This Agreement is governed by the law of the Republic of Harrowmere, an invented jurisdiction used for this fixture."
+        }
+      }
+    },
+    {
+      "file": "Pellerin-Okafor Weather for Ferrymen CONTRACT signed.pdf",
+      "agreement_no": "LWE-A-2016-02",
+      "kind": "author",
+      "isbn": "9798900101378",
+      "title": "Weather for Ferrymen",
+      "language": "English",
+      "language_original": "English",
+      "territory": "the United States, its territories and Canada",
+      "formats": [
+        "paperback"
+      ],
+      "term": "for seven years from first publication, renewing automatically for successive periods of three years unless either party gives written notice of termination",
+      "reversion_trigger": "out of print after written request and cure period",
+      "reversion_notice_months": 12,
+      "grantor": "Jonas Pellerin-Okafor",
+      "grantee": "Lantern Wharf Editions",
+      "translator": null,
+      "signed_on": "2016-05-03",
+      "clauses": {
+        "parties": {
+          "clause_number": 1,
+          "heading": "Parties and Work",
+          "text": "This Agreement No. LWE-A-2016-02 is made on 3 May 2016 between Jonas Pellerin-Okafor (\"the Grantor\", also called the Author) and Lantern Wharf Editions of 3 Tallow Steps, Port Alder (\"the Publisher\"), concerning the work titled \"Weather for Ferrymen\" (ISBN 979-8-9001-0137-8) (\"the Work\")."
+        },
+        "grant": {
+          "clause_number": 2,
+          "heading": "Grant of Rights",
+          "text": "The Grantor grants to the Publisher the exclusive right to publish the Work in the English language, in the following territory: the United States, its territories and Canada, in the following formats: paperback."
+        },
+        "term": {
+          "clause_number": 3,
+          "heading": "Term",
+          "text": "This grant of rights continues for seven years from first publication, renewing automatically for successive periods of three years unless either party gives written notice of termination."
+        },
+        "royalties": {
+          "clause_number": 4,
+          "heading": "Royalties",
+          "text": "The Publisher shall pay the Grantor royalties of 8 percent of net receipts on all sales. Royalties are accounted for twice a year."
+        },
+        "subsidiary": {
+          "clause_number": 5,
+          "heading": "Subsidiary Rights",
+          "text": "Anthology and audio rights are held by the Publisher, with proceeds divided equally between the Author and the Publisher."
+        },
+        "reversion": {
+          "clause_number": 6,
+          "heading": "Reversion",
+          "text": "If the Work is out of print in all formats granted in Clause 2, the Grantor may request in writing that the rights revert. If, within twelve (12) months after the Publisher's receipt of that written request, the Publisher has not made the Work available again in at least one format granted in Clause 2, all rights granted under this Agreement revert to the Grantor automatically and without further notice. The Work is out of print when no edition of it is available for sale through ordinary trade channels. A print-on-demand edition listed with the Publisher's distributor counts as available."
+        },
+        "permissions": {
+          "clause_number": 7,
+          "heading": "Permissions",
+          "text": "The Publisher may grant permission to reprint single poems or extracts of up to fifty lines from the Work in anthologies, only with the prior written consent of the Author. Permission fees are divided equally between the Author and the Publisher."
+        },
+        "warranties": {
+          "clause_number": 8,
+          "heading": "Warranties and Credit",
+          "text": "The Grantor warrants that the Grantor holds the rights granted and that the Work does not infringe any third-party right. The Publisher shall credit the Grantor on every edition of the Work."
+        },
+        "law": {
+          "clause_number": 9,
+          "heading": "Governing Law",
+          "text": "This Agreement is governed by the law of the Republic of Harrowmere, an invented jurisdiction used for this fixture."
+        }
+      }
+    },
+    {
+      "file": "ferriday_fieldguide_agreement_2019-10-21.pdf",
+      "agreement_no": "LWE-A-2019-03",
+      "kind": "author",
+      "isbn": "9798900102740",
+      "title": "A Field Guide to Closing Time",
+      "language": "English",
+      "language_original": "English",
+      "territory": "the world excluding the member states of the European Union",
+      "formats": [
+        "paperback",
+        "hardcover",
+        "ebook"
+      ],
+      "term": "for ten years from the date of signature",
+      "reversion_trigger": "out of print after written request and cure period",
+      "reversion_notice_months": 9,
+      "grantor": "Maud Ferriday",
+      "grantee": "Lantern Wharf Editions",
+      "translator": null,
+      "signed_on": "2019-10-21",
+      "clauses": {
+        "parties": {
+          "clause_number": 1,
+          "heading": "Parties and Work",
+          "text": "This Agreement No. LWE-A-2019-03 is made on 21 October 2019 between Maud Ferriday (\"the Grantor\", also called the Author) and Lantern Wharf Editions of 3 Tallow Steps, Port Alder (\"the Publisher\"), concerning the work titled \"A Field Guide to Closing Time\" (ISBN 979-8-9001-0274-0) (\"the Work\")."
+        },
+        "grant": {
+          "clause_number": 2,
+          "heading": "Grant of Rights",
+          "text": "The Grantor grants to the Publisher the exclusive right to publish the Work in the English language, in the following territory: the world excluding the member states of the European Union, in the following formats: paperback, hardcover and ebook."
+        },
+        "term": {
+          "clause_number": 3,
+          "heading": "Term",
+          "text": "This grant of rights continues for ten years from the date of signature."
+        },
+        "royalties": {
+          "clause_number": 4,
+          "heading": "Royalties",
+          "text": "The Publisher shall pay the Grantor royalties of 10 percent of net receipts on all sales. Royalties are accounted for twice a year."
+        },
+        "subsidiary": {
+          "clause_number": 5,
+          "heading": "Subsidiary Rights",
+          "text": "Audio and anthology rights are held by the Author. The Publisher holds first refusal on stage and broadcast adaptation for sixty days."
+        },
+        "reversion": {
+          "clause_number": 6,
+          "heading": "Reversion",
+          "text": "If the Work is out of print in all formats granted in Clause 2, the Grantor may request in writing that the rights revert. If, within nine (9) months after the Publisher's receipt of that written request, the Publisher has not made the Work available again in at least one format granted in Clause 2, all rights granted under this Agreement revert to the Grantor automatically and without further notice. The Work is out of print when no edition of it is available for sale through ordinary trade channels. A print-on-demand edition listed with the Publisher's distributor counts as available."
+        },
+        "permissions": {
+          "clause_number": 7,
+          "heading": "Permissions",
+          "text": "The Publisher may grant permission to reprint single poems or extracts of up to fifty lines from the Work in anthologies, only with the prior written consent of the Author. Permission fees are divided equally between the Author and the Publisher."
+        },
+        "warranties": {
+          "clause_number": 8,
+          "heading": "Warranties and Credit",
+          "text": "The Grantor warrants that the Grantor holds the rights granted and that the Work does not infringe any third-party right. The Publisher shall credit the Grantor on every edition of the Work."
+        },
+        "law": {
+          "clause_number": 9,
+          "heading": "Governing Law",
+          "text": "This Agreement is governed by the law of the Republic of Harrowmere, an invented jurisdiction used for this fixture."
+        }
+      }
+    },
+    {
+      "file": "t_2014_vasconcelo-reis_orchard_RIGHTS+TRANSLATOR.pdf",
+      "agreement_no": "LWE-T-2014-01",
+      "kind": "translation",
+      "isbn": "9798900104119",
+      "title": "The Drowned Orchard",
+      "language": "English",
+      "language_original": "Portuguese",
+      "territory": "the United States, Canada, the United Kingdom, Ireland, Australia and New Zealand",
+      "formats": [
+        "paperback",
+        "ebook"
+      ],
+      "term": "for ten years from first publication, renewable by written agreement",
+      "reversion_trigger": "out of print after written request and cure period",
+      "reversion_notice_months": 9,
+      "grantor": "Estate of Teodoro Vasconcelo-Reis, represented by Lucia Vasconcelo-Reis, executor",
+      "grantee": "Lantern Wharf Editions",
+      "translator": "Wren Tallowfield",
+      "signed_on": "2014-06-09",
+      "clauses": {
+        "parties": {
+          "clause_number": 1,
+          "heading": "Parties and Work",
+          "text": "This Agreement No. LWE-T-2014-01 is made on 9 June 2014 between Estate of Teodoro Vasconcelo-Reis, represented by Lucia Vasconcelo-Reis, executor (\"the Grantor\", also called the Rights Holder) and Lantern Wharf Editions of 3 Tallow Steps, Port Alder (\"the Publisher\"), concerning the work titled \"The Drowned Orchard\" (ISBN 979-8-9001-0411-9) (\"the Work\"), being an English-language translation from the Portuguese by Wren Tallowfield (\"the Translator\")."
+        },
+        "grant": {
+          "clause_number": 2,
+          "heading": "Grant of Rights",
+          "text": "The Grantor grants to the Publisher the exclusive right to publish the Work in the English language, in the following territory: the United States, Canada, the United Kingdom, Ireland, Australia and New Zealand, in the following formats: paperback and ebook."
+        },
+        "term": {
+          "clause_number": 3,
+          "heading": "Term",
+          "text": "This grant of rights continues for ten years from first publication, renewable by written agreement."
+        },
+        "royalties": {
+          "clause_number": 4,
+          "heading": "Royalties",
+          "text": "The Publisher shall pay the Grantor royalties of 7 percent of net receipts on all sales, paid to the Rights Holder, with 2 percent of net receipts paid to the Translator. Royalties are accounted for twice a year."
+        },
+        "subsidiary": {
+          "clause_number": 5,
+          "heading": "Subsidiary Rights",
+          "text": "Anthology and serial rights in the English translation are held by the Publisher, with proceeds divided equally between the Rights Holder and the Translator."
+        },
+        "engagement": {
+          "clause_number": 6,
+          "heading": "Translator's Engagement",
+          "text": "The Publisher engages the Translator to prepare the English translation and shall pay the Translator a fee of USD 1,800, half on signature and half on delivery and acceptance of the manuscript. The Translator signs this Agreement to confirm the engagement and to confirm that the translation is the Translator's own work."
+        },
+        "reversion": {
+          "clause_number": 7,
+          "heading": "Reversion",
+          "text": "If the Work is out of print in all formats granted in Clause 2, the Grantor may request in writing that the rights revert. If, within nine (9) months after the Publisher's receipt of that written request, the Publisher has not made the Work available again in at least one format granted in Clause 2, all rights granted under this Agreement revert to the Grantor automatically and without further notice. The Work is out of print when no edition of it is available for sale through ordinary trade channels. A print-on-demand edition listed with the Publisher's distributor counts as available."
+        },
+        "permissions": {
+          "clause_number": 8,
+          "heading": "Permissions",
+          "text": "The Publisher may grant permission to reprint single poems or extracts of up to fifty lines from the Work in anthologies, only with the prior written consent of the Rights Holder and the Translator. Permission fees are divided equally between the Rights Holder and the Translator."
+        },
+        "warranties": {
+          "clause_number": 9,
+          "heading": "Warranties and Credit",
+          "text": "The Grantor warrants that the Grantor holds the rights granted and that the Work does not infringe any third-party right. The Publisher shall credit the Grantor on every edition of the Work."
+        },
+        "law": {
+          "clause_number": 10,
+          "heading": "Governing Law",
+          "text": "This Agreement is governed by the law of the Republic of Harrowmere, an invented jurisdiction used for this fixture."
+        }
+      }
+    },
+    {
+      "file": "Kaminrowska_Lanterns_translation-contract_signed-2020-02-17.pdf",
+      "agreement_no": "LWE-T-2020-01",
+      "kind": "translation",
+      "isbn": "9798900105482",
+      "title": "Lanterns for the Second Winter",
+      "language": "English",
+      "language_original": "Polish",
+      "territory": "the United States and its territories",
+      "formats": [
+        "paperback"
+      ],
+      "term": "for eight years from first publication",
+      "reversion_trigger": "out of print after written request and cure period",
+      "reversion_notice_months": 6,
+      "grantor": "Zofia Kaminrowska",
+      "grantee": "Lantern Wharf Editions",
+      "translator": "Saskia Dunmore",
+      "signed_on": "2020-02-17",
+      "clauses": {
+        "parties": {
+          "clause_number": 1,
+          "heading": "Parties and Work",
+          "text": "This Agreement No. LWE-T-2020-01 is made on 17 February 2020 between Zofia Kaminrowska (\"the Grantor\", also called the Rights Holder) and Lantern Wharf Editions of 3 Tallow Steps, Port Alder (\"the Publisher\"), concerning the work titled \"Lanterns for the Second Winter\" (ISBN 979-8-9001-0548-2) (\"the Work\"), being an English-language translation from the Polish by Saskia Dunmore (\"the Translator\")."
+        },
+        "grant": {
+          "clause_number": 2,
+          "heading": "Grant of Rights",
+          "text": "The Grantor grants to the Publisher the exclusive right to publish the Work in the English language, in the following territory: the United States and its territories, in the following formats: paperback."
+        },
+        "term": {
+          "clause_number": 3,
+          "heading": "Term",
+          "text": "This grant of rights continues for eight years from first publication."
+        },
+        "royalties": {
+          "clause_number": 4,
+          "heading": "Royalties",
+          "text": "The Publisher shall pay the Grantor royalties of 8 percent of net receipts on all sales, paid to the Rights Holder, with 2 percent of net receipts paid to the Translator. Royalties are accounted for twice a year."
+        },
+        "subsidiary": {
+          "clause_number": 5,
+          "heading": "Subsidiary Rights",
+          "text": "Serial rights are held by the Rights Holder. Anthology rights in the English translation are held by the Publisher, with proceeds divided equally."
+        },
+        "engagement": {
+          "clause_number": 6,
+          "heading": "Translator's Engagement",
+          "text": "The Publisher engages the Translator to prepare the English translation and shall pay the Translator a fee of USD 2,400, half on signature and half on delivery and acceptance of the manuscript. The Translator signs this Agreement to confirm the engagement and to confirm that the translation is the Translator's own work."
+        },
+        "reversion": {
+          "clause_number": 7,
+          "heading": "Reversion",
+          "text": "If the Work is out of print in all formats granted in Clause 2, the Grantor may request in writing that the rights revert. If, within six (6) months after the Publisher's receipt of that written request, the Publisher has not made the Work available again in at least one format granted in Clause 2, all rights granted under this Agreement revert to the Grantor automatically and without further notice. The Work is out of print when no edition of it is available for sale through ordinary trade channels. A print-on-demand edition listed with the Publisher's distributor counts as available."
+        },
+        "permissions": {
+          "clause_number": 8,
+          "heading": "Permissions",
+          "text": "The Publisher may grant permission to reprint single poems or extracts of up to fifty lines from the Work in anthologies, only with the prior written consent of the Rights Holder and the Translator. Permission fees are divided equally between the Rights Holder and the Translator."
+        },
+        "warranties": {
+          "clause_number": 9,
+          "heading": "Warranties and Credit",
+          "text": "The Grantor warrants that the Grantor holds the rights granted and that the Work does not infringe any third-party right. The Publisher shall credit the Grantor on every edition of the Work."
+        },
+        "law": {
+          "clause_number": 10,
+          "heading": "Governing Law",
+          "text": "This Agreement is governed by the law of the Republic of Harrowmere, an invented jurisdiction used for this fixture."
+        }
+      }
+    },
+    {
+      "file": "solvang-hald harbour 2021 contract (nordlys).pdf",
+      "agreement_no": "LWE-T-2021-01",
+      "kind": "translation",
+      "isbn": "9798900106854",
+      "title": "The Harbour Does Not Answer",
+      "language": "English",
+      "language_original": "Norwegian",
+      "territory": "the United States, its territories and Canada",
+      "formats": [
+        "hardcover",
+        "paperback",
+        "ebook"
+      ],
+      "term": "for the full term of copyright in the translation",
+      "reversion_trigger": "out of print after written request and cure period",
+      "reversion_notice_months": 12,
+      "grantor": "Nordlys Literary Agency, for Eirik Solvang-Hald",
+      "grantee": "Lantern Wharf Editions",
+      "translator": "Ilse Brandvold",
+      "signed_on": "2021-11-30",
+      "clauses": {
+        "parties": {
+          "clause_number": 1,
+          "heading": "Parties and Work",
+          "text": "This Agreement No. LWE-T-2021-01 is made on 30 November 2021 between Nordlys Literary Agency, for Eirik Solvang-Hald (\"the Grantor\", also called the Rights Holder) and Lantern Wharf Editions of 3 Tallow Steps, Port Alder (\"the Publisher\"), concerning the work titled \"The Harbour Does Not Answer\" (ISBN 979-8-9001-0685-4) (\"the Work\"), being an English-language translation from the Norwegian by Ilse Brandvold (\"the Translator\")."
+        },
+        "grant": {
+          "clause_number": 2,
+          "heading": "Grant of Rights",
+          "text": "The Grantor grants to the Publisher the exclusive right to publish the Work in the English language, in the following territory: the United States, its territories and Canada, in the following formats: hardcover, paperback and ebook."
+        },
+        "term": {
+          "clause_number": 3,
+          "heading": "Term",
+          "text": "This grant of rights continues for the full term of copyright in the translation."
+        },
+        "royalties": {
+          "clause_number": 4,
+          "heading": "Royalties",
+          "text": "The Publisher shall pay the Grantor royalties of 9 percent of net receipts on all sales, paid to the Rights Holder, with 2 percent of net receipts paid to the Translator. Royalties are accounted for twice a year."
+        },
+        "subsidiary": {
+          "clause_number": 5,
+          "heading": "Subsidiary Rights",
+          "text": "Anthology and audio rights in the English translation are held by the Publisher, with proceeds divided equally between the Rights Holder and the Translator."
+        },
+        "engagement": {
+          "clause_number": 6,
+          "heading": "Translator's Engagement",
+          "text": "The Publisher engages the Translator to prepare the English translation and shall pay the Translator a fee of USD 3,000, half on signature and half on delivery and acceptance of the manuscript. The Translator signs this Agreement to confirm the engagement and to confirm that the translation is the Translator's own work."
+        },
+        "reversion": {
+          "clause_number": 7,
+          "heading": "Reversion",
+          "text": "If the Work is out of print in all formats granted in Clause 2, the Grantor may request in writing that the rights revert. If, within twelve (12) months after the Publisher's receipt of that written request, the Publisher has not made the Work available again in at least one format granted in Clause 2, all rights granted under this Agreement revert to the Grantor automatically and without further notice. The Work is out of print when no edition of it is available for sale through ordinary trade channels. A print-on-demand edition listed with the Publisher's distributor counts as available."
+        },
+        "permissions": {
+          "clause_number": 8,
+          "heading": "Permissions",
+          "text": "The Publisher may grant permission to reprint single poems or extracts of up to fifty lines from the Work in anthologies, only with the prior written consent of the Rights Holder and the Translator. Permission fees are divided equally between the Rights Holder and the Translator."
+        },
+        "warranties": {
+          "clause_number": 9,
+          "heading": "Warranties and Credit",
+          "text": "The Grantor warrants that the Grantor holds the rights granted and that the Work does not infringe any third-party right. The Publisher shall credit the Grantor on every edition of the Work."
+        },
+        "law": {
+          "clause_number": 10,
+          "heading": "Governing Law",
+          "text": "This Agreement is governed by the law of the Republic of Harrowmere, an invented jurisdiction used for this fixture."
+        }
+      }
+    }
+  ]
+}

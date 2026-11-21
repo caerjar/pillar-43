@@ -1,0 +1,298 @@
+#!/usr/bin/env bash
+# pillar43 — start, stop, or check status
+# Usage: ./pillar43 [stop|status|logs|backup|restore|reset|reset --hard]
+
+set -euo pipefail
+
+BOLD='\033[1m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+RED='\033[0;31m'
+CYAN='\033[0;36m'
+DIM='\033[2m'
+RESET='\033[0m'
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+URL="http://127.0.0.1:5173"
+
+# Worktree guard. `./pillar43` does `docker compose up --build`, which
+# collides on every host port with the running prod stack and shares the
+# real vault bind-mounts; running it from a worktree clobbers the main
+# checkout's containers. See DEV_MANUAL.md > Worktree workflow.
+# rev-parse --git-common-dir prints the shared .git dir for all worktrees;
+# rev-parse --git-dir prints THIS worktree's .git (a file pointer for
+# linked worktrees, the real dir for the main checkout). If they resolve
+# to the same path we're on the main checkout — otherwise refuse.
+common_dir=$(git -C "$SCRIPT_DIR" rev-parse --git-common-dir 2>/dev/null || echo "")
+this_git=$(git -C "$SCRIPT_DIR" rev-parse --git-dir 2>/dev/null || echo "")
+if [ -n "$common_dir" ] && [ -n "$this_git" ] && [ "$(cd "$SCRIPT_DIR" 2>/dev/null && cd "$common_dir" 2>/dev/null && pwd)" != "$(cd "$SCRIPT_DIR" 2>/dev/null && cd "$this_git" 2>/dev/null && pwd)" ]; then
+  echo "Refusing to run ./pillar43 from a git worktree."
+  echo "Use the main checkout at the repo root. See DEV_MANUAL.md > Worktree workflow."
+  exit 1
+fi
+
+cd "$SCRIPT_DIR"
+
+# docker-compose.yml bind-mounts libraries.conf and docker-compose.override.yml
+# as individual FILES, and a missing bind-mount source makes Docker create a
+# directory instead of erroring. Both are gitignored, so a fresh clone has
+# neither. See scripts/ensure-host-files.sh.
+bash "$SCRIPT_DIR/scripts/ensure-host-files.sh"
+
+# Build stamp — exported so `docker compose build` picks them up as ARGs.
+# Surfaced in the web bundle (window.__PILLAR43_BUILD__) and GET /api/health.
+export PILLAR43_GIT_SHA="$(git rev-parse --short HEAD 2>/dev/null || echo unknown)"
+export PILLAR43_BUILT_AT="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+
+# ── Sub-commands ──────────────────────────────────────────────────────────────
+
+case "${1:-start}" in
+
+  stop)
+    echo -e "${YELLOW}Stopping Pillar-43…${RESET}"
+    docker compose down
+    echo -e "${GREEN}Stopped.${RESET}"
+    exit 0
+    ;;
+
+  logs)
+    docker compose logs -f
+    exit 0
+    ;;
+
+  status)
+    docker compose ps
+    exit 0
+    ;;
+
+  clean-jobs)
+    echo -e "${YELLOW}Cleaning stuck jobs…${RESET}"
+    docker compose exec -T api python3 -c "
+from services.job_store import list_jobs
+from services.db import get_db
+import time
+
+conn = get_db()
+try:
+    # Mark all running jobs as cancelled
+    running = [j for j in list_jobs() if j.status == 'running']
+    for job in running:
+        conn.execute(
+            'UPDATE jobs SET status = ?, finished_at = ?, progress = ? WHERE id = ?',
+            ('cancelled', time.time(), 'Cancelled (manual cleanup)', job.id)
+        )
+        print(f'Cancelled: {job.label} (id={job.id[:8]}...)')
+    conn.commit()
+    if not running:
+        print('No running jobs found.')
+finally:
+    conn.close()
+" 2>/dev/null || echo -e "${RED}Failed to clean jobs. Is Pillar-43 running?${RESET}"
+    echo -e "${GREEN}Done.${RESET}"
+    exit 0
+    ;;
+
+  backup)
+    # One verified file outside the data volume: consent, withdrawals, accounts, ledger.
+    shift
+    exec bash "$SCRIPT_DIR/scripts/governance.sh" backup "$@"
+    ;;
+
+  restore)
+    shift
+    exec bash "$SCRIPT_DIR/scripts/governance.sh" restore "$@"
+    ;;
+
+  reset)
+    # ── Option A: wipe app data, keep notes + .env ────────────────────────────
+    HARD="${2:-}"
+    # Both resets delete the data volume: consent levels, withdrawals, accounts
+    # and the ledger. Refuse unless a backup covers them (scripts/governance.sh).
+    bash "$SCRIPT_DIR/scripts/governance.sh" check || exit 1
+    if [[ "$HARD" == "--hard" ]]; then
+      echo ""
+      echo -e "${RED}${BOLD}  Full reset — removes containers, images, .env, notes/, and generated/.${RESET}"
+      echo -e "${RED}  ⚠  ALL NOTES WILL BE DELETED. This cannot be undone.${RESET}"
+      echo ""
+      printf "  Type YES to continue: "
+      read -r CONFIRM </dev/tty
+      if [[ "$CONFIRM" != "YES" ]]; then
+        echo -e "${YELLOW}  Aborted.${RESET}"
+        exit 0
+      fi
+
+      echo ""
+      echo -e "${YELLOW}  Stopping and removing containers + volumes…${RESET}"
+      docker compose down -v --remove-orphans
+
+      echo -e "${YELLOW}  Removing built images…${RESET}"
+      docker rmi pillar43-api pillar43-web 2>/dev/null || true
+
+      # Load NOTES_PATH and GENERATED_PATH from .env to wipe vault dirs
+      if [[ -f "$SCRIPT_DIR/.env" ]]; then
+        # shellcheck disable=SC1090
+        source "$SCRIPT_DIR/.env"
+        if [[ -n "${NOTES_PATH:-}" && -d "$NOTES_PATH" ]]; then
+          echo -e "${YELLOW}  Clearing notes/…${RESET}"
+          rm -rf "${NOTES_PATH:?}"/*
+        fi
+        if [[ -n "${GENERATED_PATH:-}" && -d "$GENERATED_PATH" ]]; then
+          echo -e "${YELLOW}  Clearing generated/…${RESET}"
+          rm -rf "${GENERATED_PATH:?}"/*
+        fi
+        echo -e "${YELLOW}  Removing .env…${RESET}"
+        rm -f "$SCRIPT_DIR/.env"
+      fi
+
+      # Clear extra library mounts (libraries.conf + generated override)
+      if [[ -f "$SCRIPT_DIR/libraries.conf" ]]; then
+        echo -e "${YELLOW}  Clearing libraries.conf…${RESET}"
+        printf '# Extra read-only libraries — managed by scripts/ensure-host-files.sh\n# Edit this file and run scripts/gen-libraries-override.sh to add/remove libraries.\n# Then restart: docker compose up --build -d\n' > "$SCRIPT_DIR/libraries.conf"
+      fi
+      if [[ -f "$SCRIPT_DIR/docker-compose.override.yml" ]]; then
+        echo -e "${YELLOW}  Removing docker-compose.override.yml…${RESET}"
+        rm -f "$SCRIPT_DIR/docker-compose.override.yml"
+      fi
+
+      echo ""
+      echo -e "${GREEN}${BOLD}  Full reset complete.${RESET}"
+      echo -e "  Copy ${CYAN}.env.example${RESET} to ${CYAN}.env${RESET} to configure and start fresh."
+      echo ""
+    else
+      # ── Option A: soft reset ──────────────────────────────────────────────
+      echo ""
+      echo -e "${YELLOW}${BOLD}  Resetting app data — notes and library files are untouched.${RESET}"
+      echo ""
+      printf "  Type YES to continue: "
+      read -r CONFIRM </dev/tty
+      if [[ "$CONFIRM" != "YES" ]]; then
+        echo -e "${YELLOW}  Aborted.${RESET}"
+        exit 0
+      fi
+
+      echo ""
+      echo -e "${YELLOW}  Stopping containers…${RESET}"
+      docker compose down
+
+      if [[ -f "$SCRIPT_DIR/.env" ]]; then
+        # shellcheck disable=SC1090
+        source "$SCRIPT_DIR/.env"
+        if [[ -n "${GENERATED_PATH:-}" && -d "$GENERATED_PATH" ]]; then
+          echo -e "${YELLOW}  Clearing generated/…${RESET}"
+          rm -rf "${GENERATED_PATH:?}"/*
+        fi
+      fi
+
+      echo -e "${YELLOW}  Removing catalog database volume…${RESET}"
+      docker volume rm pillar43_pillar43_data 2>/dev/null || true
+
+      echo ""
+      echo -e "${GREEN}${BOLD}  Reset complete.${RESET} Run ${CYAN}./pillar43${RESET} to start fresh."
+      echo ""
+    fi
+    exit 0
+    ;;
+
+  start|"")
+    ;;  # fall through to start logic
+
+  *)
+    echo ""
+    echo -e "  Usage: ${BOLD}./pillar43${RESET} [command]"
+    echo ""
+    echo -e "  ${CYAN}(no args)${RESET}       start Pillar-43"
+    echo -e "  ${CYAN}stop${RESET}            stop all services"
+    echo -e "  ${CYAN}status${RESET}          show container status"
+    echo -e "  ${CYAN}logs${RESET}            tail all logs"
+    echo -e "  ${CYAN}clean-jobs${RESET}      cancel jobs left running"
+    echo -e "  ${CYAN}backup [dest]${RESET}   save consent, withdrawals, accounts, ledger to a file"
+    echo -e "  ${CYAN}restore <file>${RESET}  put a backup back (--force to replace a longer ledger)"
+    echo -e "  ${CYAN}reset${RESET}           wipe app data, keep notes + .env"
+    echo -e "  ${CYAN}reset --hard${RESET}    full wipe including images + .env"
+    echo ""
+    exit 1
+    ;;
+esac
+
+# ── Start ─────────────────────────────────────────────────────────────────────
+
+# Check .env exists
+if [[ ! -f "$SCRIPT_DIR/.env" ]]; then
+  echo -e "${RED}No .env found. Copy .env.example to .env first.${RESET}"
+  exit 1
+fi
+
+# Check if already running
+WEB_RUNNING=$(docker compose ps --status running --services 2>/dev/null | grep -c '^web$' || true)
+
+if [[ "$WEB_RUNNING" -gt 0 ]]; then
+  echo ""
+  echo -e "${BOLD}  Pillar-43 is already running.${RESET}"
+  echo ""
+  echo -e "  Open ${CYAN}${URL}${RESET} in your browser."
+  echo ""
+  echo -e "  ${DIM}./pillar43 stop         — stop all services${RESET}"
+  echo -e "  ${DIM}./pillar43 logs         — tail logs${RESET}"
+  echo -e "  ${DIM}./pillar43 status       — show container status${RESET}"
+  echo -e "  ${DIM}./pillar43 reset        — wipe app data, keep notes + .env${RESET}"
+  echo -e "  ${DIM}./pillar43 reset --hard — full wipe including images + .env${RESET}"
+  echo ""
+else
+  echo ""
+  echo -e "${BOLD}  Starting Pillar-43…${RESET}"
+  echo ""
+  # --build is essential: api and web both bake code into the image at build
+  # time (uvicorn from copied source; vite build → static dist). Without it, a
+  # `./pillar43` invocation after a code change silently runs the previous
+  # build and looks like nothing happened. Docker's layer cache keeps this
+  # sub-second when nothing changed.
+  # --remove-orphans: the `worker` service was deleted 2026-08-18 when its
+  # jobs moved into the api process. Without this flag an existing worker
+  # container keeps running alongside the new in-process scheduler, and
+  # every background job fires twice.
+  docker compose up --build -d --remove-orphans
+
+  echo ""
+
+  # Wait for web to be ready (up to 30s)
+  printf "  Waiting for web"
+  for i in $(seq 1 30); do
+    if docker compose logs web 2>/dev/null | grep -q "Local:"; then
+      break
+    fi
+    printf "."
+    sleep 1
+  done
+  echo ""
+
+  # Wait for API to be ready too. Web (Vite) can report "Local:" within a few
+  # seconds, but the API container needs to finish uvicorn import + alembic
+  # migrations — typically another 10s. Without this poll the browser opens
+  # before /api/library/status responds; the frontend retry handles it, but
+  # the user sees a "Starting Pillar-43…" splash for several seconds.
+  printf "  Waiting for API"
+  for i in $(seq 1 30); do
+    if curl -sf -o /dev/null --max-time 1 "http://127.0.0.1:8000/health"; then
+      break
+    fi
+    printf "."
+    sleep 1
+  done
+  echo ""
+  echo ""
+  echo -e "  ${GREEN}✓${RESET} ${BOLD}Ready.${RESET} Open ${CYAN}${URL}${RESET} in your browser."
+  echo ""
+  echo -e "  ${DIM}./pillar43 stop         — stop all services${RESET}"
+  echo -e "  ${DIM}./pillar43 logs         — tail logs${RESET}"
+  echo -e "  ${DIM}./pillar43 status       — show container status${RESET}"
+  echo -e "  ${DIM}./pillar43 reset        — wipe app data, keep notes + .env${RESET}"
+  echo -e "  ${DIM}./pillar43 reset --hard — full wipe including images + .env${RESET}"
+  echo ""
+
+  # Open browser automatically
+  if command -v open &>/dev/null; then
+    open "$URL"
+  elif command -v xdg-open &>/dev/null; then
+    xdg-open "$URL"
+  fi
+fi

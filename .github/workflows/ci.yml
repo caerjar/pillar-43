@@ -1,0 +1,88 @@
+name: CI
+
+on:
+  push:
+    branches: [main, 'sprint/**', 'feat/**']
+  pull_request:
+    branches: [main]
+
+jobs:
+  web:
+    name: Web — typecheck + test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - run: npm ci
+      - run: npx tsc --noEmit
+      # --coverage enforces the thresholds in vite.config.ts. They are the
+      # measured floor, so this only fails when coverage goes BACKWARDS.
+      - run: npx vitest run --coverage
+      # Kept in lockstep with the `eslint` hook in .pre-commit-config.yaml.
+      # The ceiling is a ratchet: it may only ever go down. Raising it to admit
+      # a new warning defeats the point — fix the warning instead.
+      # 39 = 31 hex + 6 max-lines + 2 exhaustive-deps. jsx-a11y is at zero.
+      # See the composition table in web/eslint.config.js.
+      - run: npx eslint src --max-warnings=11
+
+  api:
+    name: API — lint + typecheck + test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: api
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      # requirements-dev.txt pulls in requirements.txt plus the pinned
+      # test/lint toolchain. Installing ruff unpinned here meant CI silently
+      # changed lint behaviour whenever a new ruff shipped.
+      - run: pip install -r requirements-dev.txt
+      - run: ruff check .
+      # Layout is owned by `ruff format`; this fails if anyone hand-edits
+      # formatting or lands a commit without running it.
+      - run: ruff format --check .
+      # scripts/mypy-api runs this inside the test container; here it runs on
+      # the host against the same api/mypy.ini. That's sound because the config
+      # sets ignore_missing_imports = True, so the two environments agree even
+      # though only the container has the full runtime image installed.
+      - run: mypy --config-file mypy.ini .
+      # -n auto matches scripts/test-api, so CI and local exercise the same
+      # parallel path. The remaining divergence — CI runs on the host with /tmp
+      # paths, scripts/test-api runs in the container with fixture bind-mounts —
+      # is tracked for convergence.
+      - run: |
+          TESTING=1 \
+          LIBRARY_ROOT=/tmp/vault \
+          NOTES_PATH=/tmp/active \
+          GENERATED_PATH=/tmp/generated \
+          pytest -q -n auto --cov --cov-report=term:skip-covered
+
+  lint-drift:
+    name: Drift linters
+    runs-on: ubuntu-latest
+    # These five guard the docs-vs-code contract: module READMEs, route
+    # docstrings, the generated help manual, path-traversal sanitizers, and
+    # dotted function references in prose. They previously lived ONLY in
+    # .pre-commit-config.yaml, so a contributor who never ran `pre-commit
+    # install` got a green PR that would have been blocked locally.
+    # All five are stdlib-only, so no dependency install is needed.
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python3 scripts/check_module_readmes.py --strict
+      - run: python3 scripts/check_route_docstring_drift.py --strict
+      - run: python3 scripts/check_path_traversal.py --strict
+      - run: python3 scripts/check_function_reference_drift.py --strict

@@ -1,0 +1,32 @@
+[package]
+name = "pillar43"
+version = "0.1.0"
+description = "Pillar-43 — personal knowledge OS"
+authors = ["Eon Meridian"]
+edition = "2021"
+rust-version = "1.77"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+# No extra features: the window loads an external loopback URL, so none of
+# the asset/protocol machinery is used.
+tauri = { version = "2", features = [] }
+tauri-plugin-dialog = "2"
+tauri-plugin-single-instance = "2"
+# Reading locations.json before the backend exists — see src/paths.rs.
+# Declared explicitly rather than leaned on transitively via tauri.
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+# Only for SIGTERM on shutdown — std has no portable signal API, and the
+# lifespan shutdown half (scheduler stop + git flush) must actually run.
+libc = "0.2"
+
+[profile.release]
+# The shell is a few hundred lines; optimise for a small binary rather than
+# for speed it will never need. The heavy lifting is all in the sidecar.
+opt-level = "s"
+lto = true
+codegen-units = 1
+strip = true
